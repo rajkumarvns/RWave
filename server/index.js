@@ -4,6 +4,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./src/config/db.js";
 import authRoutes from "./src/routers/auth.route.js";
+import messageRoutes from "./src/routers/message.route.js";
+import userRoutes from "./src/routers/user.route.js";
 
 dotenv.config();
 
@@ -22,6 +24,8 @@ app.use(
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/users", userRoutes);
 
 // Health Check Route
 app.get("/", (req, res) => {
