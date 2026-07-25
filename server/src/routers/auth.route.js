@@ -1,10 +1,17 @@
 import express from "express";
-import { login, logout, register } from "../controllers/auth.controller.js";
+import { login, logout, register, checkAuth, deleteAccount, updateProfile, forgotPassword, verifyOtp, resetPassword } from "../controllers/auth.controller.js";
+import { protectRoute } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login);
 router.post("/logout", logout);
+router.post("/forgot-password", forgotPassword);
+router.post("/verify-otp", verifyOtp);
+router.post("/reset-password", resetPassword);
+router.get("/check", protectRoute, checkAuth);
+router.put("/profile", protectRoute, updateProfile);
+router.delete("/account", protectRoute, deleteAccount);
 
 export default router;
