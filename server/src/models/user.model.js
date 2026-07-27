@@ -26,6 +26,41 @@ const userSchema = new mongoose.Schema(
     resetPasswordOtpExpires: {
       type: Date,
     },
+    username: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    bio: {
+      type: String,
+      maxlength: 150,
+      default: "",
+    },
+    phoneNumber: {
+      type: String,
+      default: "",
+    },
+    statusMessage: {
+      type: String,
+      enum: ["Available", "Busy", "Away", "Offline"],
+      default: "Available",
+    },
+    blockedUsers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    privacySettings: {
+      showPhoneNumber: {
+        type: Boolean,
+        default: false,
+      },
+      showLastSeen: {
+        type: Boolean,
+        default: true,
+      },
+    },
   },
   { timestamps: true }
 );

@@ -1,10 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const MessageBubble = ({ message, isSent }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleted, setDeleted] = useState(false);
+  const [isDisintegrating, setIsDisintegrating] = useState(false);
   const [contextMenu, setContextMenu] = useState(null);
+
+  useEffect(() => {
+    if (message.isGhost) {
+      const age = Date.now() - new Date(message.createdAt).getTime();
+      const remainingTime = 5000 - age;
+
+      if (remainingTime <= 0) {
+        setDeleted(true);
+      } else {
+        const timer = setTimeout(() => {
+          setIsDisintegrating(true);
+          setTimeout(() => {
+            setDeleted(true);
+            // We can also trigger the backend delete here for safety
+            if (isSent) {
+              axios.delete(`http://localhost:4500/api/messages/${message._id}`, { withCredentials: true }).catch(() => {});
+            }
+          }, 1000); // Wait for animation to finish
+        }, remainingTime);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [message, isSent]);
 
   const formatTime = (dateString) => {
     return new Date(dateString).toLocaleTimeString([], {
@@ -50,11 +74,13 @@ const MessageBubble = ({ message, isSent }) => {
         className={`flex ${isSent ? "justify-end" : "justify-start"} animate-fade-in-up relative`}
       >
         <div
-          className={`max-w-[70%] rounded-2xl px-4 py-2 shadow-sm cursor-context-menu transition-colors duration-300 ${
+          className={`max-w-[70%] rounded-2xl px-4 py-2 shadow-sm cursor-context-menu transition-all duration-1000 transform ${
             isSent
               ? "bg-blue-600 text-white rounded-br-none shadow-blue-500/20"
               : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 text-slate-800 dark:text-slate-50 rounded-bl-none"
-          } ${isDeleting ? "opacity-50" : ""}`}
+          } ${isDeleting ? "opacity-50" : ""} ${
+            isDisintegrating ? "opacity-0 scale-50 blur-md rotate-12" : ""
+          } ${message.isGhost && !isDisintegrating ? "animate-pulse" : ""}`}
         >
           {message.image && (
             <img
@@ -69,6 +95,7 @@ const MessageBubble = ({ message, isSent }) => {
           <div
             className={`text-[10px] mt-1 flex items-center justify-end gap-1 ${isSent ? "text-blue-200" : "text-slate-500 dark:text-slate-400"}`}
           >
+            {message.isGhost && <span className="mr-1">👻</span>}
             <span>{formatTime(message.createdAt)}</span>
             {isSent && <span className="text-[12px]">✓✓</span>}
           </div>

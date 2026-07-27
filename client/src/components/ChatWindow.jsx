@@ -23,6 +23,7 @@ const ChatWindow = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showMenu, setShowMenu] = useState(false);
+  const [isGhostMode, setIsGhostMode] = useState(false);
 
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -111,7 +112,7 @@ const ChatWindow = () => {
     if (!text.trim() && !imagePreview) return;
 
     try {
-      await sendMessage({ text: text.trim(), image: imagePreview });
+      await sendMessage({ text: text.trim(), image: imagePreview, isGhost: isGhostMode });
       playSendSound();
       setText("");
       removeImage();
@@ -152,7 +153,38 @@ const ChatWindow = () => {
   );
 
   const displayMessages = searchQuery ? filteredMessages : messages;
-  const isOnline = onlineUsers.includes(selectedUser._id);
+  const handleBlockUser = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:4500/api/auth/block/${selectedUser._id}`,
+        {},
+        { withCredentials: true }
+      );
+      setAuthUser({ ...authUser, blockedUsers: response.data.blockedUsers });
+      toast.success("User blocked");
+      setShowMenu(false);
+    } catch (error) {
+      toast.error("Failed to block user");
+    }
+  };
+
+  const handleUnblockUser = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:4500/api/auth/unblock/${selectedUser._id}`,
+        {},
+        { withCredentials: true }
+      );
+      setAuthUser({ ...authUser, blockedUsers: response.data.blockedUsers });
+      toast.success("User unblocked");
+      setShowMenu(false);
+    } catch (error) {
+      toast.error("Failed to unblock user");
+    }
+  };
+
+  const isBlocked = authUser?.blockedUsers?.includes(selectedUser?._id);
+  const isOnline = onlineUsers.includes(selectedUser?._id);
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[#f4f7f6] dark:bg-[#0b141a] transition-colors duration-300 relative">
@@ -202,6 +234,7 @@ const ChatWindow = () => {
               <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 leading-tight group-hover:text-blue-600 transition-colors">
                   {selectedUser.fullName}
+                  {isBlocked && <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Blocked</span>}
                 </h3>
                 <p
                   className={`text-sm font-medium ${isOnline ? "text-green-600 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}
@@ -238,10 +271,28 @@ const ChatWindow = () => {
                   </button>
                   <button
                     onClick={handleClearHistory}
-                    className="w-full text-left px-4 py-2 text-red-500 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 mt-1 cursor-pointer"
+                    className="w-full text-left px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 mt-1 cursor-pointer"
                   >
                     🗑️ Clear History
                   </button>
+                  
+                  <div className="border-t border-slate-200 dark:border-slate-700 my-1"></div>
+                  
+                  {isBlocked ? (
+                    <button
+                      onClick={handleUnblockUser}
+                      className="w-full text-left px-4 py-2 text-blue-500 hover:bg-blue-50 dark:hover:bg-slate-700 flex items-center gap-2 cursor-pointer"
+                    >
+                      🔓 Unblock User
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleBlockUser}
+                      className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 flex items-center gap-2 cursor-pointer"
+                    >
+                      🚫 Block User
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -299,95 +350,114 @@ const ChatWindow = () => {
             </div>
           )}
 
-          <form
-            onSubmit={handleSendMessage}
-            className="flex gap-3 items-end relative z-20"
-          >
-            <div className="flex-1 bg-white dark:bg-[#1e293b] rounded-3xl shadow-lg border border-slate-200 dark:border-slate-700/50 flex items-end p-1.5 transition-colors">
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                ref={fileInputRef}
-                onChange={handleImageChange}
-              />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="p-3 mb-0.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex-shrink-0"
-                title="Attach Image"
-              >
-                <svg
-                  className="w-6 h-6 transform rotate-45"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                  ></path>
-                </svg>
-              </button>
-
-              <textarea
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage();
-                  }
-                }}
-                placeholder="Message..."
-                className="flex-1 max-h-32 min-h-[44px] bg-transparent resize-none py-3 px-2 focus:outline-none text-slate-900 dark:text-slate-50 placeholder-slate-400 custom-scrollbar"
-                rows="1"
-              />
-
-              <button
-                type="button"
-                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                className={`p-3 mb-0.5 rounded-full transition-colors flex-shrink-0 ${showEmojiPicker ? "text-blue-500 bg-blue-50 dark:bg-slate-800" : "text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
-                title="Emojis"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
-              </button>
+          {isBlocked ? (
+            <div className="p-4 text-center text-slate-500 bg-slate-100 dark:bg-slate-800 rounded-xl">
+              You have blocked this user.
             </div>
-
-            <button
-              type="submit"
-              disabled={!text.trim() && !imagePreview}
-              className={`p-4 rounded-full flex items-center justify-center flex-shrink-0 transition-all shadow-lg ${!text.trim() && !imagePreview ? "bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-500 hover:scale-105 text-white shadow-blue-500/30"}`}
+          ) : (
+            <form
+              onSubmit={handleSendMessage}
+              className="flex gap-3 items-end relative z-20"
             >
-              <svg
-                className="w-6 h-6 transform translate-x-0.5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+              <div className="flex-1 bg-white dark:bg-[#1e293b] rounded-3xl shadow-lg border border-slate-200 dark:border-slate-700/50 flex items-end p-1.5 transition-colors">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="p-3 mb-0.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex-shrink-0"
+                  title="Attach Image"
+                >
+                  <svg
+                    className="w-6 h-6 transform rotate-45"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                    ></path>
+                  </svg>
+                </button>
+
+                <textarea
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
+                  }}
+                  placeholder="Message..."
+                  className="flex-1 max-h-32 min-h-[44px] bg-transparent resize-none py-3 px-2 focus:outline-none text-slate-900 dark:text-slate-50 placeholder-slate-400 custom-scrollbar"
+                  rows="1"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                  className={`p-3 mb-0.5 rounded-full transition-colors flex-shrink-0 ${showEmojiPicker ? "text-blue-500 bg-blue-50 dark:bg-slate-800" : "text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                  title="Emojis"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsGhostMode(!isGhostMode)}
+                  className={`p-3 mb-0.5 rounded-full transition-colors flex-shrink-0 ${isGhostMode ? "text-purple-500 bg-purple-50 dark:bg-purple-900/30" : "text-slate-400 hover:text-purple-500 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                  title="Ghost Mode (Auto-delete)"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4c-3.3 0-6 2.7-6 6v7l2-1.5 2 1.5 2-1.5 2 1.5 2-1.5 2 1.5V10c0-3.3-2.7-6-6-6z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 9h.01M14 9h.01" />
+                  </svg>
+                </button>
+              </div>
+
+              <button
+                type="submit"
+                disabled={(!text.trim() && !imagePreview) || isBlocked}
+                className={`p-4 rounded-full flex items-center justify-center flex-shrink-0 transition-all shadow-lg ${(!text.trim() && !imagePreview) || isBlocked ? "bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-500 hover:scale-105 text-white shadow-blue-500/30"}`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                ></path>
-              </svg>
-            </button>
-          </form>
+                <svg
+                  className="w-6 h-6 transform translate-x-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                  ></path>
+                </svg>
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </div>
