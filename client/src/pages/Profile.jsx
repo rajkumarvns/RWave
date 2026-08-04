@@ -91,19 +91,20 @@ const Profile = () => {
       <div className="absolute top-0 left-0 w-full h-full opacity-5 bg-linear-to-b from-blue-500 to-transparent pointer-events-none" />
 
       {/* Navbar */}
-      <div className="h-16 border-b border-slate-200 dark:border-slate-700/50 flex items-center px-6 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md z-10 shadow-sm transition-colors duration-300">
+      <div className="fixed top-0 left-0 w-full h-16 border-b border-slate-200/50 dark:border-slate-700/50 flex items-center px-6 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl z-50 shadow-sm transition-colors duration-300">
         <Link
           to="/chat"
-          className="text-slate-600 dark:text-slate-400 hover:text-blue-500 flex items-center gap-2 transition-colors font-medium"
+          className="group flex items-center gap-2 px-4 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-300 font-medium"
         >
-          <span>← Back to Chat</span>
+          <span className="transform group-hover:-translate-x-1 transition-transform duration-300">←</span>
+          <span>Back to Chat</span>
         </Link>
-        <h1 className="ml-8 text-xl font-bold text-slate-900 dark:text-slate-50 transition-colors duration-300">
+        <h1 className="ml-8 text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-slate-800 to-slate-500 dark:from-slate-50 dark:to-slate-300 transition-colors duration-300">
           Your Profile
         </h1>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-8 flex justify-center z-10">
+      <div className="flex-1 overflow-y-auto pt-24 pb-8 px-8 flex justify-center z-10">
         <div className="w-full max-w-2xl">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700/50 shadow-xl transition-colors duration-300">
             

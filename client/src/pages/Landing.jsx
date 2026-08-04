@@ -14,25 +14,25 @@ const Landing = () => {
       <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-linear-to-br from-blue-500 via-indigo-500 to-transparent pointer-events-none" />
 
       {/* Navbar */}
-      <nav className="h-20 border-b border-slate-700/50 flex items-center justify-between px-8 bg-slate-900/50 glass-panel z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">
+      <nav className="fixed top-0 left-0 w-full h-20 border-b border-slate-700/50 flex items-center justify-between px-8 bg-slate-900/40 backdrop-blur-xl z-50 transition-all duration-300">
+        <div className="flex items-center gap-3 group cursor-pointer">
+          <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/30 group-hover:scale-105 group-hover:shadow-blue-500/50 transition-all duration-300">
             RW
           </div>
-          <span className="text-xl font-bold text-slate-50 tracking-wide">
+          <span className="text-xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-slate-50 to-slate-300 tracking-wide group-hover:text-white transition-colors duration-300">
             RWave
           </span>
         </div>
-        <div className="flex gap-4">
+        <div className="flex items-center gap-6">
           <Link
             to="/login"
-            className="px-5 py-2 text-slate-300 hover:text-white transition-colors font-medium"
+            className="text-slate-300 hover:text-white transition-colors font-medium relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-blue-400 after:transition-all after:duration-300 hover:after:w-full"
           >
             Login
           </Link>
           <Link
             to="/register"
-            className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all shadow-lg shadow-blue-500/20 font-medium"
+            className="px-6 py-2.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 font-semibold transform hover:-translate-y-0.5"
           >
             Get Started
           </Link>
