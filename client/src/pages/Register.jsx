@@ -35,7 +35,7 @@ const Register = () => {
       setAuthUser(response.data);
       toast.success("Account created successfully!");
     } catch (error) {
-      toast.error(error.response?.data?.error || "Registration failed");
+      toast.error(error.response?.data?.message || error.response?.data?.error || "Registration failed");
     } finally {
       setIsRegistering(false);
     }
