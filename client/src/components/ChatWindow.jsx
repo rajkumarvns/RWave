@@ -45,7 +45,7 @@ const ChatWindow = () => {
           }}
         ></div>
         <div className="text-center animate-fade-in-up z-10 p-12 max-w-md">
-          <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl text-5xl transform hover:scale-110 transition-transform">
+          <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary text-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl text-5xl transform hover:scale-110 transition-transform">
             👋
           </div>
           <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-3">
@@ -205,7 +205,7 @@ const ChatWindow = () => {
                 setShowSearch(false);
                 setSearchQuery("");
               }}
-              className="p-2 text-slate-500 hover:text-blue-500 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="p-2 text-slate-500 hover:text-primary rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               ←
             </button>
@@ -232,7 +232,7 @@ const ChatWindow = () => {
                 )}
               </div>
               <div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 leading-tight group-hover:text-blue-600 transition-colors">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 leading-tight group-hover:text-primary transition-colors">
                   {selectedUser.fullName}
                   {isBlocked && <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Blocked</span>}
                 </h3>
@@ -246,13 +246,13 @@ const ChatWindow = () => {
             <div className="flex gap-2 relative">
               <button
                 onClick={() => setShowSearch(true)}
-                className="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                className="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
               >
                 🔍
               </button>
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                className="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
               >
                 ⋮
               </button>
@@ -281,7 +281,7 @@ const ChatWindow = () => {
                   {isBlocked ? (
                     <button
                       onClick={handleUnblockUser}
-                      className="w-full text-left px-4 py-2 text-blue-500 hover:bg-blue-50 dark:hover:bg-slate-700 flex items-center gap-2 cursor-pointer"
+                      className="w-full text-left px-4 py-2 text-primary hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 cursor-pointer"
                     >
                       🔓 Unblock User
                     </button>
@@ -307,7 +307,7 @@ const ChatWindow = () => {
       >
         {isMessagesLoading ? (
           <div className="flex justify-center items-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         ) : displayMessages.length === 0 ? (
           <div className="text-center text-slate-400 mt-10">
@@ -370,7 +370,7 @@ const ChatWindow = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="p-3 mb-0.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex-shrink-0"
+                  className="p-3 mb-0.5 text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex-shrink-0"
                   title="Attach Image"
                 >
                   <svg
@@ -405,7 +405,7 @@ const ChatWindow = () => {
                 <button
                   type="button"
                   onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                  className={`p-3 mb-0.5 rounded-full transition-colors flex-shrink-0 ${showEmojiPicker ? "text-blue-500 bg-blue-50 dark:bg-slate-800" : "text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                  className={`p-3 mb-0.5 rounded-full transition-colors flex-shrink-0 ${showEmojiPicker ? "text-primary bg-primary/10 dark:bg-slate-800" : "text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800"}`}
                   title="Emojis"
                 >
                   <svg
@@ -440,7 +440,7 @@ const ChatWindow = () => {
               <button
                 type="submit"
                 disabled={(!text.trim() && !imagePreview) || isBlocked}
-                className={`p-4 rounded-full flex items-center justify-center flex-shrink-0 transition-all shadow-lg ${(!text.trim() && !imagePreview) || isBlocked ? "bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-500 hover:scale-105 text-white shadow-blue-500/30"}`}
+                className={`p-4 rounded-full flex items-center justify-center flex-shrink-0 transition-all shadow-lg ${(!text.trim() && !imagePreview) || isBlocked ? "bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed" : "bg-primary hover:bg-secondary hover:scale-105 text-white shadow-primary/30"}`}
               >
                 <svg
                   className="w-6 h-6 transform translate-x-0.5"

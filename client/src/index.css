@@ -8,6 +8,9 @@
 
 @theme {
   --font-sans: 'Inter', sans-serif;
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-hover: var(--color-hover);
 }
 
 @layer utilities {

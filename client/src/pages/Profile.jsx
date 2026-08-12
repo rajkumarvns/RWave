@@ -3,9 +3,11 @@ import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useTheme, themes } from "../context/ThemeContext";
 
 const Profile = () => {
   const { authUser, setAuthUser } = useAuth();
+  const { colorTheme, setColorTheme } = useTheme();
   const [isUpdating, setIsUpdating] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -88,13 +90,13 @@ const Profile = () => {
 
   return (
     <div className="flex flex-col h-screen w-full bg-slate-50 dark:bg-slate-900 relative overflow-hidden transition-colors duration-300">
-      <div className="absolute top-0 left-0 w-full h-full opacity-5 bg-linear-to-b from-blue-500 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-full opacity-5 bg-linear-to-b from-primary to-transparent pointer-events-none" />
 
       {/* Navbar */}
       <div className="fixed top-0 left-0 w-full h-16 border-b border-slate-200/50 dark:border-slate-700/50 flex items-center px-6 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl z-50 shadow-sm transition-colors duration-300">
         <Link
           to="/chat"
-          className="group flex items-center gap-2 px-4 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-300 font-medium"
+          className="group flex items-center gap-2 px-4 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-secondary hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-300 font-medium"
         >
           <span className="transform group-hover:-translate-x-1 transition-transform duration-300">←</span>
           <span>Back to Chat</span>
@@ -125,7 +127,7 @@ const Profile = () => {
                   <img
                     src={authUser?.profilePic || "/logo.png"}
                     alt="profile"
-                    className="w-32 h-32 rounded-full object-cover border-4 border-slate-100 dark:border-slate-700 shadow-lg group-hover:border-blue-500 transition-colors"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-slate-100 dark:border-slate-700 shadow-lg group-hover:border-primary transition-colors"
                   />
                   <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <span className="text-white text-sm font-medium">
@@ -143,7 +145,7 @@ const Profile = () => {
                   {!isEditing && (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="hidden sm:block px-4 py-2 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors"
+                      className="hidden sm:block px-4 py-2 bg-primary/10 dark:bg-primary/10 text-primary dark:text-secondary font-semibold rounded-lg hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors"
                     >
                       Edit Profile
                     </button>
@@ -162,7 +164,7 @@ const Profile = () => {
                 {!isEditing && (
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="sm:hidden mt-4 px-6 py-2 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold rounded-full hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors w-full"
+                    className="sm:hidden mt-4 px-6 py-2 bg-primary/10 dark:bg-primary/10 text-primary dark:text-secondary font-semibold rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors w-full"
                   >
                     Edit Profile
                   </button>
@@ -181,7 +183,7 @@ const Profile = () => {
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 dark:text-white transition-all"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white transition-all"
                     />
                   </div>
                   <div>
@@ -194,7 +196,7 @@ const Profile = () => {
                         value={formData.username}
                         onChange={handleChange}
                         placeholder="your_handle"
-                        className="w-full pl-9 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 dark:text-white transition-all"
+                        className="w-full pl-9 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white transition-all"
                       />
                     </div>
                   </div>
@@ -208,7 +210,7 @@ const Profile = () => {
                     onChange={handleChange}
                     maxLength="150"
                     placeholder="Tell us about yourself..."
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 dark:text-white transition-all min-h-[100px] resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white transition-all min-h-[100px] resize-none"
                   ></textarea>
                 </div>
 
@@ -221,7 +223,7 @@ const Profile = () => {
                       value={formData.phoneNumber}
                       onChange={handleChange}
                       placeholder="+1 (555) 000-0000"
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 dark:text-white transition-all"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white transition-all"
                     />
                   </div>
                   <div>
@@ -230,7 +232,7 @@ const Profile = () => {
                       name="statusMessage"
                       value={formData.statusMessage}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 dark:text-white transition-all"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white transition-all"
                     >
                       <option value="Available">🟢 Available</option>
                       <option value="Busy">🔴 Busy</option>
@@ -254,7 +256,7 @@ const Profile = () => {
                         name="showPhoneNumber"
                         checked={formData.showPhoneNumber}
                         onChange={handleChange}
-                        className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                        className="w-5 h-5 text-primary rounded focus:ring-primary"
                       />
                     </label>
                     <label className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer">
@@ -267,7 +269,7 @@ const Profile = () => {
                         name="showLastSeen"
                         checked={formData.showLastSeen}
                         onChange={handleChange}
-                        className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                        className="w-5 h-5 text-primary rounded focus:ring-primary"
                       />
                     </label>
                   </div>
@@ -277,7 +279,7 @@ const Profile = () => {
                   <button
                     onClick={handleSaveProfile}
                     disabled={isUpdating}
-                    className="flex-1 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all disabled:opacity-50"
+                    className="flex-1 py-3.5 bg-primary hover:bg-secondary text-white font-bold rounded-xl shadow-lg shadow-primary/30 transition-all disabled:opacity-50"
                   >
                     {isUpdating ? "Saving..." : "Save Changes"}
                   </button>
@@ -327,6 +329,40 @@ const Profile = () => {
                 </div>
               </div>
             )}
+
+            {/* Appearance Section */}
+            <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700/50">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Appearance</h3>
+              <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                <div>
+                  <div className="font-semibold text-slate-800 dark:text-slate-200">Color Theme</div>
+                  <div className="text-xs text-slate-500">Choose your favorite color palette</div>
+                </div>
+                <details className="dropdown dropdown-end" id="profile-theme-dropdown">
+                  <summary className="btn btn-sm btn-outline border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 cursor-pointer">
+                    {themes[colorTheme]?.name || "Theme"} <span className="opacity-50 text-xs ml-1">▼</span>
+                  </summary>
+                  <ul className="dropdown-content menu bg-base-100 dark:bg-slate-800 rounded-box z-[1] w-48 p-2 shadow mt-2">
+                    {Object.keys(themes).map((themeKey) => (
+                      <li key={themeKey}>
+                        <a 
+                          onClick={() => {
+                            setColorTheme(themeKey);
+                            const dropdown = document.getElementById("profile-theme-dropdown");
+                            if (dropdown) dropdown.removeAttribute("open");
+                          }} 
+                          className={colorTheme === themeKey ? "bg-slate-200 dark:bg-slate-700 font-bold" : ""}
+                        >
+                          <div className="w-3 h-3 rounded-full mr-2 shrink-0" style={{ backgroundColor: themes[themeKey].primary }}></div>
+                          {themes[themeKey].name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>

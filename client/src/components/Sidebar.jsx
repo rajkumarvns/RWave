@@ -51,7 +51,7 @@ const Sidebar = () => {
               <img
                 src={authUser?.profilePic || "/logo.png"}
                 alt="avatar"
-                className="w-12 h-12 rounded-full object-cover shadow-sm group-hover/avatar:shadow-blue-500/30 transition-all duration-300 group-hover/avatar:scale-105 border border-slate-200 dark:border-slate-700"
+                className="w-12 h-12 rounded-full object-cover shadow-sm group-hover/avatar:shadow-primary/30 transition-all duration-300 group-hover/avatar:scale-105 border border-slate-200 dark:border-slate-700"
               />
               <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white dark:border-[#0b141a]" />
             </div>
@@ -69,12 +69,12 @@ const Sidebar = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search conversations..."
-            className="w-[288px] pl-10 pr-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-transparent focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none transition-all text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 opacity-0 group-hover:opacity-100"
+            className="w-[288px] pl-10 pr-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-transparent focus:border-primary focus:bg-white dark:focus:bg-slate-800 focus:outline-none transition-all text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 opacity-0 group-hover:opacity-100"
           />
         </div>
 
         {/* User List */}
-        <div className="flex-1 overflow-y-auto px-2 pb-4 space-y-1 custom-scrollbar w-[320px]">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 pb-4 space-y-1 custom-scrollbar w-[320px]">
           {users
             .filter((user) =>
               user.fullName.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -93,14 +93,14 @@ const Sidebar = () => {
                 >
                   {/* Active Indicator Bar */}
                   {isSelected && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-blue-600 rounded-r-full shadow-md z-10"></div>
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary rounded-r-full shadow-md z-10"></div>
                   )}
 
                   <div className="relative flex-shrink-0 ml-1">
                     <img
                       src={user.profilePic || "/logo.png"}
                       alt="user"
-                      className={`w-12 h-12 rounded-full object-cover transition-transform ${isSelected ? "border-2 border-blue-500" : "border border-slate-200 dark:border-slate-700"}`}
+                      className={`w-12 h-12 rounded-full object-cover transition-transform ${isSelected ? "border-2 border-primary" : "border border-slate-200 dark:border-slate-700"}`}
                     />
                     {isOnline && (
                       <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white dark:border-[#0b141a]" />
@@ -109,12 +109,12 @@ const Sidebar = () => {
 
                   <div className="flex-1 min-w-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pr-2">
                     <h3
-                      className={`font-semibold text-sm truncate ${isSelected ? "text-blue-600 dark:text-blue-400" : "text-slate-900 dark:text-slate-50"}`}
+                      className={`font-semibold text-sm truncate ${isSelected ? "text-primary dark:text-secondary" : "text-slate-900 dark:text-slate-50"}`}
                     >
                       {user.fullName}
                     </h3>
                     <p
-                      className={`text-xs mt-0.5 truncate ${isOnline ? "text-blue-500 dark:text-blue-400 font-medium" : "text-slate-500 dark:text-slate-400"}`}
+                      className={`text-xs mt-0.5 truncate ${isOnline ? "text-secondary dark:text-secondary font-medium" : "text-slate-500 dark:text-slate-400"}`}
                     >
                       {isOnline ? "Online now" : "Offline"}
                     </p>
@@ -128,7 +128,7 @@ const Sidebar = () => {
         <div className="mt-auto p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col group-hover:flex-row items-start group-hover:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/20 transition-colors duration-300 w-[320px]">
           <Link
             to="/settings"
-            className="flex items-center gap-4 p-2 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all group-hover:w-[130px] overflow-hidden ml-1"
+            className="flex items-center gap-4 p-2 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-secondary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all group-hover:w-[130px] overflow-hidden ml-1"
           >
             <span className="text-xl flex-shrink-0">⚙️</span>
             <span className="font-semibold text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">

@@ -28,6 +28,7 @@ function App() {
         <Route path="/forgot-password" element={!authUser ? <ForgotPassword /> : <Navigate to="/" />} />
       </Routes>
       <Toaster position="top-center" toastOptions={{ 
+        duration: 3000,
         style: {
           background: '#1e293b',
           color: '#f8fafc',

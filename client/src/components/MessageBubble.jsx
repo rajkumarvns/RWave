@@ -76,7 +76,7 @@ const MessageBubble = ({ message, isSent }) => {
     } catch (error) {
       console.error("Failed to delete message", error);
       setIsDeleting(false);
-      toast.error("Failed to delete message");
+      toast.error(`Failed to delete message: ${error.response?.data?.error || error.message}`);
     }
   };
 
@@ -126,7 +126,7 @@ const MessageBubble = ({ message, isSent }) => {
         <div
           className={`max-w-[75%] px-5 py-3 shadow-md cursor-context-menu transition-all duration-500 transform hover:-translate-y-0.5 ${
             isSent
-              ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-3xl rounded-br-sm shadow-indigo-500/30"
+              ? "bg-gradient-to-br from-primary to-secondary text-white rounded-3xl rounded-br-sm shadow-primary/30"
               : "bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200/50 dark:border-slate-700/50 text-slate-800 dark:text-slate-100 rounded-3xl rounded-bl-sm shadow-slate-200/50 dark:shadow-slate-900/50"
           } ${isDeleting ? "opacity-50 scale-95" : ""} ${
             isDisintegrating ? "opacity-0 scale-50 blur-xl rotate-12" : ""

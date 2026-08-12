@@ -3,50 +3,12 @@ import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 
-const themes = {
-  whatsapp: {
-    name: "WhatsApp",
-    primary: "#00a884",
-    secondary: "#25D366",
-    hover: "#128C7E",
-  },
-  spotify: {
-    name: "Spotify",
-    primary: "#1DB954",
-    secondary: "#1ED760",
-    hover: "#1aa34a",
-  },
-  discord: {
-    name: "Discord",
-    primary: "#5865F2",
-    secondary: "#7289DA",
-    hover: "#4752C4",
-  },
-  twitter: {
-    name: "Twitter",
-    primary: "#1D9BF0",
-    secondary: "#1A8CD8",
-    hover: "#1A8CD8",
-  },
-  youtube: {
-    name: "YouTube",
-    primary: "#FF0000",
-    secondary: "#FF0000",
-    hover: "#CC0000",
-  },
-  github: {
-    name: "GitHub",
-    primary: "#24292e",
-    secondary: "#24292e",
-    hover: "#1b1f23",
-  },
-};
+import { useTheme, themes } from "../context/ThemeContext";
 
 const Landing = () => {
   const { authUser } = useAuth();
-  const [activeTheme, setActiveTheme] = useState("whatsapp");
-  
-  const theme = themes[activeTheme];
+  const { colorTheme } = useTheme();
+  const theme = themes[colorTheme] || themes.default;
 
   // If already logged in, skip landing page
   if (authUser) return <Navigate to="/chat" />;
@@ -77,29 +39,7 @@ const Landing = () => {
           </div>
           <div className="flex items-center gap-4">
             
-            {/* Theme Dropdown in Navbar */}
-            <details className="dropdown dropdown-end" id="theme-dropdown">
-              <summary className="btn btn-ghost btn-sm font-medium text-slate-600 dark:text-slate-300 cursor-pointer">
-                Theme <span className="opacity-50 text-xs">▼</span>
-              </summary>
-              <ul className="dropdown-content menu bg-base-100 dark:bg-slate-800 rounded-box z-[1] w-40 p-2 shadow mt-2">
-                {Object.keys(themes).map((themeKey) => (
-                  <li key={themeKey}>
-                    <a 
-                      onClick={() => {
-                        setActiveTheme(themeKey);
-                        const dropdown = document.getElementById("theme-dropdown");
-                        if (dropdown) dropdown.removeAttribute("open");
-                      }} 
-                      className={activeTheme === themeKey ? "bg-slate-200 dark:bg-slate-700 font-bold" : ""}
-                    >
-                      <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: themes[themeKey].primary }}></div>
-                      {themes[themeKey].name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </details>
+            {/* Theme Dropdown removed and moved to Profile */}
 
             <motion.div
               initial={{ opacity: 0, y: 50 }}

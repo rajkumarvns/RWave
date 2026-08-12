@@ -67,7 +67,7 @@ const ForgotPassword = () => {
 
   return (
     <div className="flex justify-center items-center h-screen w-full bg-slate-50 dark:bg-slate-900 relative overflow-hidden transition-colors duration-300">
-      <div className="absolute top-0 left-0 w-full h-full opacity-5 dark:opacity-10 bg-linear-to-b from-blue-500 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-full opacity-5 dark:opacity-10 bg-linear-to-b from-primary to-transparent pointer-events-none" />
 
       <div className="w-96 p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 shadow-2xl z-10 transition-colors duration-300">
         <h1 className="text-3xl font-extrabold mb-2 text-slate-900 dark:text-white text-center tracking-tight">
@@ -86,12 +86,12 @@ const ForgotPassword = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-slate-900 dark:text-white placeholder-slate-400"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-400"
               />
               <button
                 disabled={isLoading}
                 type="submit"
-                className="w-full py-3.5 mt-2 bg-blue-600 hover:bg-blue-500 hover:-translate-y-0.5 transform transition-all duration-200 rounded-xl font-bold text-white shadow-lg shadow-blue-500/30 disabled:opacity-50 disabled:hover:translate-y-0"
+                className="w-full py-3.5 mt-2 bg-primary hover:bg-secondary hover:-translate-y-0.5 transform transition-all duration-200 rounded-xl font-bold text-white shadow-lg shadow-primary/30 disabled:opacity-50 disabled:hover:translate-y-0"
               >
                 {isLoading ? "Sending..." : "Send OTP"}
               </button>
@@ -112,12 +112,12 @@ const ForgotPassword = () => {
                 onChange={(e) => setOtp(e.target.value)}
                 required
                 maxLength={6}
-                className="w-full text-center tracking-widest text-2xl font-bold px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-slate-900 dark:text-white placeholder-slate-400"
+                className="w-full text-center tracking-widest text-2xl font-bold px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-400"
               />
               <button
                 disabled={isLoading}
                 type="submit"
-                className="w-full py-3.5 mt-2 bg-blue-600 hover:bg-blue-500 hover:-translate-y-0.5 transform transition-all duration-200 rounded-xl font-bold text-white shadow-lg shadow-blue-500/30 disabled:opacity-50 disabled:hover:translate-y-0"
+                className="w-full py-3.5 mt-2 bg-primary hover:bg-secondary hover:-translate-y-0.5 transform transition-all duration-200 rounded-xl font-bold text-white shadow-lg shadow-primary/30 disabled:opacity-50 disabled:hover:translate-y-0"
               >
                 {isLoading ? "Verifying..." : "Verify OTP"}
               </button>
@@ -138,7 +138,7 @@ const ForgotPassword = () => {
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-slate-900 dark:text-white placeholder-slate-400"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-400"
               />
               <button
                 disabled={isLoading}
