@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 const MessageBubble = ({ message, isSent }) => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -119,17 +120,26 @@ const MessageBubble = ({ message, isSent }) => {
 
   return (
     <>
-      <div
+      <motion.div
+        layout
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
         onContextMenu={handleContextMenu}
-        className={`flex ${isSent ? "justify-end" : "justify-start"} animate-fade-in-up relative`}
+        className={`flex ${isSent ? "justify-end" : "justify-start"} relative`}
       >
-        <div
-          className={`max-w-[75%] px-5 py-3 shadow-md cursor-context-menu transition-all duration-500 transform hover:-translate-y-0.5 ${
+        <motion.div
+          animate={
+            isDisintegrating
+              ? { opacity: 0, scale: 0.5, filter: "blur(10px)", rotate: 12 }
+              : isDeleting
+              ? { opacity: 0.5, scale: 0.95 }
+              : { opacity: 1, scale: 1, filter: "blur(0px)", rotate: 0 }
+          }
+          transition={{ duration: 0.3 }}
+          className={`max-w-[75%] px-5 py-3 shadow-md cursor-context-menu ${
             isSent
               ? "bg-gradient-to-br from-primary to-secondary text-white rounded-3xl rounded-br-sm shadow-primary/30"
               : "bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200/50 dark:border-slate-700/50 text-slate-800 dark:text-slate-100 rounded-3xl rounded-bl-sm shadow-slate-200/50 dark:shadow-slate-900/50"
-          } ${isDeleting ? "opacity-50 scale-95" : ""} ${
-            isDisintegrating ? "opacity-0 scale-50 blur-xl rotate-12" : ""
           } ${message.isGhost && !isDisintegrating ? "animate-pulse" : ""}`}
         >
           {message.image && (
@@ -149,42 +159,48 @@ const MessageBubble = ({ message, isSent }) => {
             <span>{formatTime(message.createdAt)}</span>
             {isSent && <span className="text-[14px] ml-0.5">✓✓</span>}
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Right-Click Context Menu */}
-      {contextMenu && (
-        <>
-          <div
-            className="fixed inset-0 z-40"
-            onClick={closeContextMenu}
-            onContextMenu={(e) => {
-              e.preventDefault();
-              closeContextMenu();
-            }}
-          ></div>
-
-          <div
-            style={{ top: contextMenu.mouseY, left: contextMenu.mouseX }}
-            className="fixed z-50 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl py-2 min-w-[160px] glass-panel animate-fade-in-up transition-colors duration-300"
-          >
-            {isSent && (
-              <button
-                onClick={handleDelete}
-                className="w-full text-left px-4 py-2 text-sm text-red-500 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
-              >
-                <span>🗑️</span> Delete Message
-              </button>
-            )}
-            <button
+      <AnimatePresence>
+        {contextMenu && (
+          <>
+            <div
+              className="fixed inset-0 z-40"
               onClick={closeContextMenu}
-              className="w-full text-left px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              onContextMenu={(e) => {
+                e.preventDefault();
+                closeContextMenu();
+              }}
+            ></div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+              style={{ top: contextMenu.mouseY, left: contextMenu.mouseX }}
+              className="fixed z-50 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl py-2 min-w-[160px] glass-panel"
             >
-              Cancel
-            </button>
-          </div>
-        </>
-      )}
+              {isSent && (
+                <button
+                  onClick={handleDelete}
+                  className="w-full text-left px-4 py-2 text-sm text-red-500 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
+                >
+                  <span>🗑️</span> Delete Message
+                </button>
+              )}
+              <button
+                onClick={closeContextMenu}
+                className="w-full text-left px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              >
+                Cancel
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 };

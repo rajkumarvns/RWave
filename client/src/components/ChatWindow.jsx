@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import MessageBubble from "./MessageBubble";
 import EmojiPicker from "emoji-picker-react";
 import toast from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ChatWindow = () => {
   const {
@@ -44,7 +45,12 @@ const ChatWindow = () => {
             backgroundSize: "30px 30px",
           }}
         ></div>
-        <div className="text-center animate-fade-in-up z-10 p-12 max-w-md">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center z-10 p-12 max-w-md"
+        >
           <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary text-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl text-5xl transform hover:scale-110 transition-transform">
             👋
           </div>
@@ -54,7 +60,7 @@ const ChatWindow = () => {
           <p className="text-slate-500 dark:text-slate-400 text-lg">
             Hover over the sidebar to select a conversation.
           </p>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -198,106 +204,106 @@ const ChatWindow = () => {
 
       {/* Header */}
       <div className="h-[76px] px-6 border-b border-slate-200/50 dark:border-slate-800/50 flex items-center justify-between bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-30 shadow-sm relative">
-        {showSearch ? (
-          <div className="flex items-center w-full gap-4 animate-fade-in-up">
-            <button
-              onClick={() => {
-                setShowSearch(false);
-                setSearchQuery("");
-              }}
-              className="p-2 text-slate-500 hover:text-primary rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+        <AnimatePresence mode="wait">
+          {showSearch ? (
+            <motion.div 
+              key="search"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex items-center w-full gap-4"
             >
-              ←
-            </button>
-            <input
-              type="text"
-              autoFocus
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search in this chat..."
-              className="flex-1 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg focus:outline-none text-slate-900 dark:text-white"
-            />
-          </div>
-        ) : (
-          <>
-            <div className="flex items-center gap-4 cursor-pointer group">
-              <div className="relative">
-                <img
-                  src={selectedUser.profilePic || "/logo.png"}
-                  alt="avatar"
-                  className="w-12 h-12 rounded-full object-cover shadow-sm group-hover:shadow-md transition-shadow"
-                />
-                {isOnline && (
-                  <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white dark:border-slate-900" />
-                )}
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 leading-tight group-hover:text-primary transition-colors">
-                  {selectedUser.fullName}
-                  {isBlocked && <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Blocked</span>}
-                </h3>
-                <p
-                  className={`text-sm font-medium ${isOnline ? "text-green-600 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}
-                >
-                  {isOnline ? "Online" : "Offline"}
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-2 relative">
               <button
-                onClick={() => setShowSearch(true)}
-                className="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                onClick={() => {
+                  setShowSearch(false);
+                  setSearchQuery("");
+                }}
+                className="p-2 text-slate-500 hover:text-primary rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
               >
-                🔍
+                ←
               </button>
-              <button
-                onClick={() => setShowMenu(!showMenu)}
-                className="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
-              >
-                ⋮
-              </button>
-
-              {/* Dropdown Menu */}
-              {showMenu && (
-                <div className="absolute top-12 right-0 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-2 z-[60] animate-fade-in-up">
-                  <button
-                    onClick={() => {
-                      setSelectedUser(null);
-                      setShowMenu(false);
-                    }}
-                    className="w-full text-left px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 cursor-pointer"
-                  >
-                    ✕ Close Chat
-                  </button>
-                  <button
-                    onClick={handleClearHistory}
-                    className="w-full text-left px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 mt-1 cursor-pointer"
-                  >
-                    🗑️ Clear History
-                  </button>
-                  
-                  <div className="border-t border-slate-200 dark:border-slate-700 my-1"></div>
-                  
-                  {isBlocked ? (
-                    <button
-                      onClick={handleUnblockUser}
-                      className="w-full text-left px-4 py-2 text-primary hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 cursor-pointer"
-                    >
-                      🔓 Unblock User
-                    </button>
-                  ) : (
-                    <button
-                      onClick={handleBlockUser}
-                      className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 flex items-center gap-2 cursor-pointer"
-                    >
-                      🚫 Block User
-                    </button>
-                  )}
+              <input
+                type="text"
+                autoFocus
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search in this chat..."
+                className="input input-bordered flex-1 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg focus:outline-none text-slate-900 dark:text-white"
+              />
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="header"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex items-center justify-between w-full"
+            >
+              <div className="flex items-center gap-4 cursor-pointer group">
+                <div className="avatar indicator">
+                  {isOnline && <span className="indicator-item badge badge-success badge-xs"></span>}
+                  <div className="w-12 h-12 rounded-full shadow-sm group-hover:shadow-md transition-shadow">
+                    <img src={selectedUser.profilePic || "/logo.png"} alt="avatar" />
+                  </div>
                 </div>
-              )}
-            </div>
-          </>
-        )}
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 leading-tight group-hover:text-primary transition-colors">
+                    {selectedUser.fullName}
+                    {isBlocked && <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Blocked</span>}
+                  </h3>
+                  <p className={`text-sm font-medium ${isOnline ? "text-green-600 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}>
+                    {isOnline ? "Online" : "Offline"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2 relative">
+                <button
+                  onClick={() => setShowSearch(true)}
+                  className="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                >
+                  🔍
+                </button>
+                <button
+                  onClick={() => setShowMenu(!showMenu)}
+                  className="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                >
+                  ⋮
+                </button>
+
+                {/* Dropdown Menu */}
+                <AnimatePresence>
+                  {showMenu && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="dropdown-content menu absolute top-12 right-0 w-48 bg-base-100 dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-2 z-[60]"
+                    >
+                      <button onClick={() => { setSelectedUser(null); setShowMenu(false); }} className="w-full text-left px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2">
+                        ✕ Close Chat
+                      </button>
+                      <button onClick={handleClearHistory} className="w-full text-left px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 mt-1">
+                        🗑️ Clear History
+                      </button>
+                      
+                      <div className="border-t border-slate-200 dark:border-slate-700 my-1"></div>
+                      
+                      {isBlocked ? (
+                        <button onClick={handleUnblockUser} className="w-full text-left px-4 py-2 text-primary hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                          🔓 Unblock User
+                        </button>
+                      ) : (
+                        <button onClick={handleBlockUser} className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                          🚫 Block User
+                        </button>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Message Area */}
@@ -328,27 +334,41 @@ const ChatWindow = () => {
       {/* Input Area */}
       <div className="p-4 bg-transparent z-10 transition-colors duration-300 relative">
         <div className="max-w-4xl mx-auto">
-          {showEmojiPicker && (
-            <div className="absolute bottom-20 left-4 z-50 shadow-2xl rounded-2xl overflow-hidden animate-fade-in-up border border-slate-200 dark:border-slate-700">
-              <EmojiPicker onEmojiClick={onEmojiClick} theme="auto" />
-            </div>
-          )}
-
-          {imagePreview && (
-            <div className="mb-4 relative inline-block animate-fade-in-up bg-white dark:bg-slate-800 p-2 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700">
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="h-32 rounded-xl object-cover"
-              />
-              <button
-                onClick={removeImage}
-                className="absolute -top-3 -right-3 bg-slate-900 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm hover:bg-red-500 hover:scale-110 shadow-lg transition-all"
+          <AnimatePresence>
+            {showEmojiPicker && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className="absolute bottom-20 left-4 z-50 shadow-2xl rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700"
               >
-                ✕
-              </button>
-            </div>
-          )}
+                <EmojiPicker onEmojiClick={onEmojiClick} theme="auto" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {imagePreview && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="mb-4 relative inline-block bg-white dark:bg-slate-800 p-2 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700"
+              >
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="h-32 rounded-xl object-cover"
+                />
+                <button
+                  onClick={removeImage}
+                  className="absolute -top-3 -right-3 bg-slate-900 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm hover:bg-red-500 hover:scale-110 shadow-lg transition-all"
+                >
+                  ✕
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {isBlocked ? (
             <div className="p-4 text-center text-slate-500 bg-slate-100 dark:bg-slate-800 rounded-xl">
