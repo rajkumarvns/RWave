@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme, themes, chatWallpapers } from "../context/ThemeContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 
 const Settings = () => {
   const [notifications, setNotifications] = useState(true);
   const { setAuthUser } = useAuth();
+  const { colorTheme, setColorTheme, chatWallpaper, setChatWallpaper } = useTheme();
   const navigate = useNavigate();
 
   const handleDeleteAccount = async () => {
@@ -71,6 +72,57 @@ const Settings = () => {
                 <div
                   className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${notifications ? "right-1" : "left-1"}`}
                 ></div>
+              </div>
+            </div>
+
+            {/* Theme Selector */}
+            <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700/50 glass-panel">
+              <h3 className="font-semibold text-slate-900 dark:text-slate-50 mb-4">
+                Color Theme
+              </h3>
+              <div className="grid grid-cols-4 gap-3">
+                {Object.entries(themes).map(([key, theme]) => (
+                  <button
+                    key={key}
+                    onClick={() => setColorTheme(key)}
+                    className={`w-full h-10 rounded-lg border-2 transition-all ${colorTheme === key ? "border-primary scale-105" : "border-transparent hover:scale-105"}`}
+                    style={{ backgroundColor: theme.primary }}
+                    title={theme.name}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Chat Wallpaper Selector */}
+            <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700/50 glass-panel">
+              <h3 className="font-semibold text-slate-900 dark:text-slate-50 mb-4">
+                Chat Background
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                {Object.entries(chatWallpapers).map(([key, wallpaper]) => (
+                  <button
+                    key={key}
+                    onClick={() => setChatWallpaper(key)}
+                    className={`relative h-20 rounded-xl border-2 overflow-hidden transition-all ${chatWallpaper === key ? "border-primary shadow-lg" : "border-slate-200 dark:border-slate-700 hover:border-primary/50"}`}
+                  >
+                    <div className="absolute inset-0 bg-[#f4f7f6] dark:bg-[#0b141a]"></div>
+                    {wallpaper.url && (
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          backgroundImage: `url('${wallpaper.url}')`,
+                          opacity: wallpaper.opacity,
+                        }}
+                      ></div>
+                    )}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/10 dark:bg-black/40 opacity-0 hover:opacity-100 transition-opacity">
+                      <span className="text-white text-sm font-medium">{wallpaper.name}</span>
+                    </div>
+                    <div className="absolute bottom-1 left-2 text-xs font-medium text-slate-600 dark:text-slate-400">
+                      {wallpaper.name}
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useChat } from "../context/ChatContext";
 import { useAuth } from "../context/AuthContext";
+import { useTheme, chatWallpapers } from "../context/ThemeContext";
 import MessageBubble from "./MessageBubble";
 import EmojiPicker from "emoji-picker-react";
 import toast from "react-hot-toast";
@@ -17,6 +18,8 @@ const ChatWindow = () => {
     onlineUsers,
   } = useChat();
   const { authUser } = useAuth();
+  const { chatWallpaper } = useTheme();
+  const currentWallpaper = chatWallpapers[chatWallpaper] || chatWallpapers.default;
 
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
@@ -195,10 +198,10 @@ const ChatWindow = () => {
   return (
     <div className="flex-1 flex flex-col h-full bg-[#f4f7f6] dark:bg-[#0b141a] transition-colors duration-300 relative">
       <div
-        className="absolute inset-0 opacity-[0.05] dark:opacity-[0.03] pointer-events-none"
+        className="absolute inset-0 pointer-events-none transition-all duration-300"
         style={{
-          backgroundImage:
-            "url('https://www.transparenttextures.com/patterns/cubes.png')",
+          backgroundImage: currentWallpaper.url ? `url('${currentWallpaper.url}')` : 'none',
+          opacity: currentWallpaper.opacity || 0.05,
         }}
       ></div>
 

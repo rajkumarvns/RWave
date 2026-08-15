@@ -45,12 +45,36 @@ export const themes = {
   },
 };
 
+export const chatWallpapers = {
+  default: {
+    name: "Default (Cubes)",
+    url: "https://www.transparenttextures.com/patterns/cubes.png",
+    opacity: "0.05",
+  },
+  dots: {
+    name: "Dots",
+    url: "https://www.transparenttextures.com/patterns/dots-pattern.png",
+    opacity: "0.05",
+  },
+  whatsapp: {
+    name: "Doodles",
+    url: "https://www.transparenttextures.com/patterns/connected.png",
+    opacity: "0.05",
+  },
+  solidDark: {
+    name: "Solid Dark",
+    url: "",
+    opacity: "0",
+  },
+};
+
 export const ThemeContext = createContext();
 
 export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }) => {
   const [colorTheme, setColorTheme] = useState(localStorage.getItem("colorTheme") || "default");
+  const [chatWallpaper, setChatWallpaper] = useState(localStorage.getItem("chatWallpaper") || "default");
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -63,8 +87,12 @@ export const ThemeProvider = ({ children }) => {
     localStorage.setItem("colorTheme", colorTheme);
   }, [colorTheme]);
 
+  useEffect(() => {
+    localStorage.setItem("chatWallpaper", chatWallpaper);
+  }, [chatWallpaper]);
+
   return (
-    <ThemeContext.Provider value={{ colorTheme, setColorTheme }}>
+    <ThemeContext.Provider value={{ colorTheme, setColorTheme, chatWallpaper, setChatWallpaper }}>
       {children}
     </ThemeContext.Provider>
   );
