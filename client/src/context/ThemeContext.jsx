@@ -62,9 +62,10 @@ export const chatWallpapers = {
     opacity: "0.05",
   },
   solidDark: {
-    name: "Solid Dark",
+    name: "Solid Black",
     url: "",
-    opacity: "0",
+    overlayColor: "#000000",
+    opacity: "1",
   },
 };
 

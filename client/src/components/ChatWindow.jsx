@@ -198,9 +198,10 @@ const ChatWindow = () => {
   return (
     <div className="flex-1 flex flex-col h-full bg-[#f4f7f6] dark:bg-[#0b141a] transition-colors duration-300 relative">
       <div
-        className="absolute inset-0 pointer-events-none transition-all duration-300"
+        className="absolute inset-0 pointer-events-none transition-all duration-300 bg-repeat"
         style={{
           backgroundImage: currentWallpaper.url ? `url('${currentWallpaper.url}')` : 'none',
+          backgroundColor: currentWallpaper.overlayColor || 'transparent',
           opacity: currentWallpaper.opacity || 0.05,
         }}
       ></div>

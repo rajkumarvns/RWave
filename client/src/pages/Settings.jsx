@@ -106,15 +106,14 @@ const Settings = () => {
                     className={`relative h-20 rounded-xl border-2 overflow-hidden transition-all ${chatWallpaper === key ? "border-primary shadow-lg" : "border-slate-200 dark:border-slate-700 hover:border-primary/50"}`}
                   >
                     <div className="absolute inset-0 bg-[#f4f7f6] dark:bg-[#0b141a]"></div>
-                    {wallpaper.url && (
-                      <div
-                        className="absolute inset-0"
-                        style={{
-                          backgroundImage: `url('${wallpaper.url}')`,
-                          opacity: wallpaper.opacity,
-                        }}
-                      ></div>
-                    )}
+                    <div
+                      className="absolute inset-0 bg-repeat"
+                      style={{
+                        backgroundImage: wallpaper.url ? `url('${wallpaper.url}')` : 'none',
+                        backgroundColor: wallpaper.overlayColor || 'transparent',
+                        opacity: wallpaper.opacity || 0.05,
+                      }}
+                    ></div>
                     <div className="absolute inset-0 flex items-center justify-center bg-black/10 dark:bg-black/40 opacity-0 hover:opacity-100 transition-opacity">
                       <span className="text-white text-sm font-medium">{wallpaper.name}</span>
                     </div>
