@@ -210,7 +210,7 @@ const Profile = () => {
                     onChange={handleChange}
                     maxLength="150"
                     placeholder="Tell us about yourself..."
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white transition-all min-h-[100px] resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white transition-all min-h-25 resize-none"
                   ></textarea>
                 </div>
 
@@ -342,7 +342,7 @@ const Profile = () => {
                   <summary className="btn btn-sm btn-outline border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 cursor-pointer">
                     {themes[colorTheme]?.name || "Theme"} <span className="opacity-50 text-xs ml-1">▼</span>
                   </summary>
-                  <ul className="dropdown-content menu bg-base-100 dark:bg-slate-800 rounded-box z-[1] w-48 p-2 shadow mt-2">
+                  <ul className="dropdown-content menu bg-base-100 dark:bg-slate-800 rounded-box z-1 w-48 p-2 shadow mt-2">
                     {Object.keys(themes).map((themeKey) => (
                       <li key={themeKey}>
                         <a 
