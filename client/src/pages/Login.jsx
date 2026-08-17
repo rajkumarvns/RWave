@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -30,56 +31,76 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen w-full bg-slate-50 dark:bg-slate-900 relative overflow-hidden transition-colors duration-300">
+    <div className="flex justify-center items-center h-screen w-full bg-base-200 relative overflow-hidden transition-colors duration-300">
       {/* Decorative Wave Background */}
       <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] bg-linear-to-b from-primary to-transparent pointer-events-none" />
 
-      <div className="w-96 p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 shadow-2xl z-10 transition-colors duration-300">
-        <h1 className="text-4xl font-extrabold mb-2 text-primary dark:text-primary text-center tracking-tight">
+      <motion.div 
+        className="w-96 p-8 rounded-2xl bg-base-100 border border-base-300 shadow-2xl z-10 transition-colors duration-300"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
+        <h1 className="text-4xl font-extrabold mb-2 text-primary text-center tracking-tight">
           RWave
         </h1>
-        <p className="text-slate-500 dark:text-slate-400 text-center mb-8 font-medium">
+        <p className="text-base-content/70 text-center mb-8 font-medium">
           Login to your account
         </p>
 
-        {/* We changed the div to a <form> so hitting "Enter" works automatically */}
         <form onSubmit={handleLogin} className="space-y-4">
-          <input
+          <motion.input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-400"
+            className="input w-full px-4 py-3 rounded-xl bg-base-200 border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base-content placeholder:text-base-content/50"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           />
-          <div className="relative">
+          <motion.div 
+            className="relative"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             <input
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full pl-10 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white transition-all placeholder:text-slate-400"
+              className="input w-full pl-10 pr-4 py-3.5 bg-base-200 border border-base-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary text-base-content transition-all placeholder:text-base-content/50"
             />
             <div className="flex justify-end mt-2">
               <Link
                 to="/forgot-password"
-                className="text-primary hover:text-secondary dark:text-primary dark:hover:text-secondary font-semibold transition-colors"
+                className="text-primary hover:text-secondary font-semibold transition-colors"
               >
                 Forgot Password?
               </Link>
             </div>
-          </div>
-          <button
+          </motion.div>
+          <motion.button
             type="submit"
-            className="w-full py-3.5 px-4 bg-primary hover:bg-secondary text-white font-bold rounded-xl shadow-lg shadow-primary/30 transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="btn btn-primary btn-gradient w-full py-3.5 px-4 text-primary-content font-bold rounded-xl shadow-lg shadow-primary/30 transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
           >
             Login
-          </button>
+          </motion.button>
         </form>
 
-        <div className="mt-8 text-center">
-          <p className="text-slate-600 dark:text-slate-400 text-sm">
+        <motion.div 
+          className="mt-8 text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <p className="text-base-content/80 text-sm">
             Don't have an account?{" "}
             <Link
               to="/register"
@@ -88,8 +109,8 @@ const Login = () => {
               Sign up
             </Link>
           </p>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

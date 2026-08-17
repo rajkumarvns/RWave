@@ -87,16 +87,16 @@ const MessageBubble = ({ message, isSent }) => {
     toast.custom((t) => (
       <div className={`${
         t.visible ? 'animate-enter' : 'animate-leave'
-      } max-w-md w-full bg-white dark:bg-slate-800 shadow-lg rounded-2xl pointer-events-auto flex ring-1 ring-black/5 dark:ring-white/10 p-4`}>
+      } max-w-md w-full bg-base-100 shadow-lg rounded-2xl pointer-events-auto flex ring-1 ring-black/5 dark:ring-white/10 p-4`}>
         <div className="flex-1 w-0">
           <div className="flex flex-col gap-3 min-w-[200px]">
-            <p className="text-sm font-medium text-slate-900 dark:text-white">
+            <p className="text-sm font-medium text-base-content">
               Delete this message?
             </p>
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => toast.dismiss(t.id)}
-                className="px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                className="px-3 py-1.5 text-xs font-medium text-base-content/80 hover:bg-base-200 rounded-lg transition-colors"
               >
                 Cancel
               </button>
@@ -125,7 +125,7 @@ const MessageBubble = ({ message, isSent }) => {
         initial={{ opacity: 0, y: 20, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         onContextMenu={handleContextMenu}
-        className={`flex ${isSent ? "justify-end" : "justify-start"} relative`}
+        className={`chat ${isSent ? "chat-sender" : "chat-receiver"} relative mb-2 w-full`}
       >
         <motion.div
           animate={
@@ -136,12 +136,15 @@ const MessageBubble = ({ message, isSent }) => {
               : { opacity: 1, scale: 1, filter: "blur(0px)", rotate: 0 }
           }
           transition={{ duration: 0.3 }}
-          className={`max-w-[75%] px-5 py-3 shadow-md cursor-context-menu ${
+          className={`chat-bubble cursor-context-menu ${
             isSent
-              ? "bg-gradient-to-br from-primary to-secondary text-white rounded-3xl rounded-br-sm shadow-primary/30"
-              : "bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200/50 dark:border-slate-700/50 text-slate-800 dark:text-slate-100 rounded-3xl rounded-bl-sm shadow-slate-200/50 dark:shadow-slate-900/50"
+              ? "bg-primary text-primary-content"
+              : "bg-base-100 text-base-content"
           } ${message.isGhost && !isDisintegrating ? "animate-pulse" : ""}`}
         >
+          <div className="chat-header opacity-50 text-xs mb-1">
+            {formatTime(message.createdAt)}
+          </div>
           {message.image && (
             <img
               src={message.image}
@@ -153,10 +156,9 @@ const MessageBubble = ({ message, isSent }) => {
             <p className="text-[15px] font-medium leading-relaxed tracking-wide">{message.text}</p>
           )}
           <div
-            className={`text-[11px] font-semibold mt-1.5 flex items-center justify-end gap-1 ${isSent ? "text-indigo-100/80" : "text-slate-500/80 dark:text-slate-400/80"}`}
+            className={`text-[11px] font-semibold mt-1.5 flex items-center justify-end gap-1 ${isSent ? "text-primary-content/80" : "text-base-content/50"}`}
           >
             {message.isGhost && <span className="mr-1 drop-shadow-sm">👻</span>}
-            <span>{formatTime(message.createdAt)}</span>
             {isSent && <span className="text-[14px] ml-0.5">✓✓</span>}
           </div>
         </motion.div>
@@ -181,19 +183,19 @@ const MessageBubble = ({ message, isSent }) => {
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.15 }}
               style={{ top: contextMenu.mouseY, left: contextMenu.mouseX }}
-              className="fixed z-50 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl py-2 min-w-[160px] glass-panel"
+              className="fixed z-50 bg-base-100 border border-base-300 rounded-xl shadow-xl py-2 min-w-[160px] glass-panel"
             >
               {isSent && (
                 <button
                   onClick={handleDelete}
-                  className="w-full text-left px-4 py-2 text-sm text-red-500 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
+                  className="w-full text-left px-4 py-2 text-sm text-error hover:bg-base-200 transition-colors flex items-center gap-2"
                 >
                   <span>🗑️</span> Delete Message
                 </button>
               )}
               <button
                 onClick={closeContextMenu}
-                className="w-full text-left px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                className="w-full text-left px-4 py-2 text-sm text-base-content/80 hover:bg-base-200 transition-colors"
               >
                 Cancel
               </button>

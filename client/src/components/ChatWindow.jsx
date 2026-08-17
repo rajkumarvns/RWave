@@ -40,9 +40,9 @@ const ChatWindow = () => {
 
   if (!selectedUser) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors duration-300 relative overflow-hidden">
+      <div className="flex-1 flex items-center justify-center bg-base-200 transition-colors duration-300 relative overflow-hidden">
         <div
-          className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]"
+          className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage: "radial-gradient(#4f46e5 2px, transparent 2px)",
             backgroundSize: "30px 30px",
@@ -54,13 +54,13 @@ const ChatWindow = () => {
           transition={{ duration: 0.5 }}
           className="text-center z-10 p-12 max-w-md"
         >
-          <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary text-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl text-5xl transform hover:scale-110 transition-transform">
+          <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary text-primary-content rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl text-5xl transform hover:scale-110 transition-transform">
             👋
           </div>
-          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-3">
+          <h2 className="text-3xl font-extrabold text-base-content mb-3">
             Welcome to RWave
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 text-lg">
+          <p className="text-base-content/70 text-lg">
             Hover over the sidebar to select a conversation.
           </p>
         </motion.div>
@@ -149,7 +149,8 @@ const ChatWindow = () => {
       setMessages([]);
       setShowMenu(false);
     } catch (error) {
-      toast.error("Failed to clear history");
+      console.error(error);
+      toast.error(error.response?.data?.error || error.message || "Failed to clear history");
     }
   };
 
@@ -196,7 +197,7 @@ const ChatWindow = () => {
   const isOnline = onlineUsers.includes(selectedUser?._id);
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#f4f7f6] dark:bg-[#0b141a] transition-colors duration-300 relative">
+    <div className="flex-1 flex flex-col h-full bg-base-200 transition-colors duration-300 relative">
       <div
         className="absolute inset-0 pointer-events-none transition-all duration-300 bg-repeat"
         style={{
@@ -207,7 +208,7 @@ const ChatWindow = () => {
       ></div>
 
       {/* Header */}
-      <div className="h-[76px] px-6 border-b border-slate-200/50 dark:border-slate-800/50 flex items-center justify-between bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-30 shadow-sm relative">
+      <div className="h-[76px] px-6 border-b border-base-300 flex items-center justify-between bg-base-100/80 backdrop-blur-md z-30 shadow-sm relative">
         <AnimatePresence mode="wait">
           {showSearch ? (
             <motion.div 
@@ -222,7 +223,7 @@ const ChatWindow = () => {
                   setShowSearch(false);
                   setSearchQuery("");
                 }}
-                className="p-2 text-slate-500 hover:text-primary rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="p-2 text-base-content/70 hover:text-primary rounded-full hover:bg-base-200"
               >
                 ←
               </button>
@@ -232,7 +233,7 @@ const ChatWindow = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search in this chat..."
-                className="input input-bordered flex-1 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg focus:outline-none text-slate-900 dark:text-white"
+                className="input input-bordered flex-1 px-4 py-2 bg-base-200 rounded-lg focus:outline-none text-base-content"
               />
             </motion.div>
           ) : (
@@ -251,11 +252,11 @@ const ChatWindow = () => {
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 leading-tight group-hover:text-primary transition-colors">
+                  <h3 className="text-lg font-bold text-base-content leading-tight group-hover:text-primary transition-colors">
                     {selectedUser.fullName}
                     {isBlocked && <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Blocked</span>}
                   </h3>
-                  <p className={`text-sm font-medium ${isOnline ? "text-green-600 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}>
+                  <p className={`text-sm font-medium ${isOnline ? "text-green-600" : "text-base-content/70"}`}>
                     {isOnline ? "Online" : "Offline"}
                   </p>
                 </div>
@@ -263,13 +264,13 @@ const ChatWindow = () => {
               <div className="flex gap-2 relative">
                 <button
                   onClick={() => setShowSearch(true)}
-                  className="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                  className="w-10 h-10 flex items-center justify-center rounded-full text-base-content/50 hover:text-primary hover:bg-base-200 transition-all"
                 >
                   🔍
                 </button>
                 <button
                   onClick={() => setShowMenu(!showMenu)}
-                  className="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                  className="w-10 h-10 flex items-center justify-center rounded-full text-base-content/50 hover:text-primary hover:bg-base-200 transition-all"
                 >
                   ⋮
                 </button>
@@ -281,23 +282,23 @@ const ChatWindow = () => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="dropdown-content menu absolute top-12 right-0 w-48 bg-base-100 dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-2 z-[60]"
+                      className="dropdown-content menu absolute top-12 right-0 w-48 bg-base-100 rounded-xl shadow-xl border border-base-300 py-2 z-[60]"
                     >
-                      <button onClick={() => { setSelectedUser(null); setShowMenu(false); }} className="w-full text-left px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2">
+                      <button onClick={() => { setSelectedUser(null); setShowMenu(false); }} className="w-full text-left px-4 py-2 text-base-content/80 hover:bg-base-200 flex items-center gap-2">
                         ✕ Close Chat
                       </button>
-                      <button onClick={handleClearHistory} className="w-full text-left px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 mt-1">
+                      <button onClick={handleClearHistory} className="w-full text-left px-4 py-2 text-base-content/80 hover:bg-base-200 flex items-center gap-2 mt-1">
                         🗑️ Clear History
                       </button>
                       
-                      <div className="border-t border-slate-200 dark:border-slate-700 my-1"></div>
+                      <div className="border-t border-base-300 my-1"></div>
                       
                       {isBlocked ? (
-                        <button onClick={handleUnblockUser} className="w-full text-left px-4 py-2 text-primary hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                        <button onClick={handleUnblockUser} className="w-full text-left px-4 py-2 text-primary hover:bg-base-200 flex items-center gap-2">
                           🔓 Unblock User
                         </button>
                       ) : (
-                        <button onClick={handleBlockUser} className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                        <button onClick={handleBlockUser} className="w-full text-left px-4 py-2 text-error hover:bg-base-200 flex items-center gap-2">
                           🚫 Block User
                         </button>
                       )}
@@ -312,7 +313,7 @@ const ChatWindow = () => {
 
       {/* Message Area */}
       <div
-        className="flex-1 overflow-y-auto px-6 py-8 space-y-6 custom-scrollbar z-10 relative"
+        className="flex-1 card overflow-y-auto px-6 py-8 custom-scrollbar z-10 relative bg-transparent shadow-none border-none rounded-none"
         onClick={() => setShowEmojiPicker(false)}
       >
         {isMessagesLoading ? (
@@ -320,7 +321,7 @@ const ChatWindow = () => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         ) : displayMessages.length === 0 ? (
-          <div className="text-center text-slate-400 mt-10">
+          <div className="text-center text-base-content/50 mt-10">
             No messages found.
           </div>
         ) : (
@@ -344,7 +345,7 @@ const ChatWindow = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                className="absolute bottom-20 left-4 z-50 shadow-2xl rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700"
+                className="absolute bottom-20 left-4 z-50 shadow-2xl rounded-2xl overflow-hidden border border-base-300"
               >
                 <EmojiPicker onEmojiClick={onEmojiClick} theme="auto" />
               </motion.div>
@@ -357,7 +358,7 @@ const ChatWindow = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="mb-4 relative inline-block bg-white dark:bg-slate-800 p-2 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700"
+                className="mb-4 relative inline-block bg-base-100 p-2 rounded-2xl shadow-xl border border-base-300"
               >
                 <img
                   src={imagePreview}
@@ -366,7 +367,7 @@ const ChatWindow = () => {
                 />
                 <button
                   onClick={removeImage}
-                  className="absolute -top-3 -right-3 bg-slate-900 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm hover:bg-red-500 hover:scale-110 shadow-lg transition-all"
+                  className="absolute -top-3 -right-3 bg-base-content text-base-100 rounded-full w-8 h-8 flex items-center justify-center text-sm hover:bg-error hover:scale-110 shadow-lg transition-all"
                 >
                   ✕
                 </button>
@@ -375,7 +376,7 @@ const ChatWindow = () => {
           </AnimatePresence>
 
           {isBlocked ? (
-            <div className="p-4 text-center text-slate-500 bg-slate-100 dark:bg-slate-800 rounded-xl">
+            <div className="p-4 text-center text-base-content/70 bg-base-200 rounded-xl">
               You have blocked this user.
             </div>
           ) : (
@@ -383,7 +384,7 @@ const ChatWindow = () => {
               onSubmit={handleSendMessage}
               className="flex gap-3 items-end relative z-20"
             >
-              <div className="flex-1 bg-white dark:bg-[#1e293b] rounded-3xl shadow-lg border border-slate-200 dark:border-slate-700/50 flex items-end p-1.5 transition-colors">
+              <div className="flex-1 input bg-base-100 rounded-3xl shadow-lg border border-base-300 flex items-end p-1.5 transition-colors min-h-[56px] h-auto">
                 <input
                   type="file"
                   accept="image/*"
@@ -394,7 +395,7 @@ const ChatWindow = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="p-3 mb-0.5 text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex-shrink-0"
+                  className="p-3 mb-0.5 text-base-content/50 hover:text-primary hover:bg-base-200 rounded-full transition-colors flex-shrink-0"
                   title="Attach Image"
                 >
                   <svg
@@ -422,14 +423,14 @@ const ChatWindow = () => {
                     }
                   }}
                   placeholder="Message..."
-                  className="flex-1 max-h-32 min-h-[44px] bg-transparent resize-none py-3 px-2 focus:outline-none text-slate-900 dark:text-slate-50 placeholder-slate-400 custom-scrollbar"
+                  className="flex-1 max-h-32 min-h-[44px] bg-transparent resize-none py-3 px-2 focus:outline-none text-base-content placeholder-base-content/50 custom-scrollbar"
                   rows="1"
                 />
 
                 <button
                   type="button"
                   onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                  className={`p-3 mb-0.5 rounded-full transition-colors flex-shrink-0 ${showEmojiPicker ? "text-primary bg-primary/10 dark:bg-slate-800" : "text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                  className={`p-3 mb-0.5 rounded-full transition-colors flex-shrink-0 ${showEmojiPicker ? "text-primary bg-primary/10" : "text-base-content/50 hover:text-primary hover:bg-base-200"}`}
                   title="Emojis"
                 >
                   <svg
@@ -449,7 +450,7 @@ const ChatWindow = () => {
                 <button
                   type="button"
                   onClick={() => setIsGhostMode(!isGhostMode)}
-                  className={`p-3 mb-0.5 rounded-full transition-colors flex-shrink-0 ${isGhostMode ? "text-purple-500 bg-purple-50 dark:bg-purple-900/30" : "text-slate-400 hover:text-purple-500 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                  className={`p-3 mb-0.5 rounded-full transition-colors flex-shrink-0 ${isGhostMode ? "text-purple-500 bg-purple-50" : "text-base-content/50 hover:text-purple-500 hover:bg-base-200"}`}
                   title="Ghost Mode (Auto-delete)"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -464,7 +465,7 @@ const ChatWindow = () => {
               <button
                 type="submit"
                 disabled={(!text.trim() && !imagePreview) || isBlocked}
-                className={`p-4 rounded-full flex items-center justify-center flex-shrink-0 transition-all shadow-lg ${(!text.trim() && !imagePreview) || isBlocked ? "bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed" : "bg-primary hover:bg-secondary hover:scale-105 text-white shadow-primary/30"}`}
+                className={`p-4 rounded-full flex items-center justify-center flex-shrink-0 transition-all shadow-lg ${(!text.trim() && !imagePreview) || isBlocked ? "bg-base-300 text-base-content/50 cursor-not-allowed" : "bg-primary hover:bg-secondary hover:scale-105 text-primary-content shadow-primary/30"}`}
               >
                 <svg
                   className="w-6 h-6 transform translate-x-0.5"

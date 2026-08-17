@@ -1,13 +1,11 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useTheme, themes } from "../context/ThemeContext";
 
 const Profile = () => {
   const { authUser, setAuthUser } = useAuth();
-  const { colorTheme, setColorTheme } = useTheme();
   const [isUpdating, setIsUpdating] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -89,29 +87,29 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen w-full bg-slate-50 dark:bg-slate-900 relative overflow-hidden transition-colors duration-300">
+    <div className="flex flex-col h-[calc(100vh-64px)] w-full bg-base-200 relative overflow-hidden transition-colors duration-300">
       <div className="absolute top-0 left-0 w-full h-full opacity-5 bg-linear-to-b from-primary to-transparent pointer-events-none" />
 
       {/* Navbar */}
-      <div className="fixed top-0 left-0 w-full h-16 border-b border-slate-200/50 dark:border-slate-700/50 flex items-center px-6 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl z-50 shadow-sm transition-colors duration-300">
+      <div className="w-full h-16 border-b border-base-300 flex shrink-0 items-center px-6 bg-base-100/60 backdrop-blur-xl z-50 shadow-sm transition-colors duration-300">
         <Link
           to="/chat"
-          className="group flex items-center gap-2 px-4 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-secondary hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-300 font-medium"
+          className="group flex items-center gap-2 px-4 py-2 rounded-xl text-base-content/80 hover:text-primary hover:bg-base-200 transition-all duration-300 font-medium"
         >
           <span className="transform group-hover:-translate-x-1 transition-transform duration-300">←</span>
           <span>Back to Chat</span>
         </Link>
-        <h1 className="ml-8 text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-slate-800 to-slate-500 dark:from-slate-50 dark:to-slate-300 transition-colors duration-300">
+        <h1 className="ml-8 text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-base-content to-base-content/50 transition-colors duration-300">
           Your Profile
         </h1>
       </div>
 
-      <div className="flex-1 overflow-y-auto pt-24 pb-8 px-8 flex justify-center z-10">
+      <div className="flex-1 overflow-y-auto pt-6 pb-6 px-4 sm:px-8 flex justify-center z-10">
         <div className="w-full max-w-2xl">
-          <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700/50 shadow-xl transition-colors duration-300">
+          <div className="bg-base-100 p-8 rounded-3xl border border-base-300 shadow-xl transition-colors duration-300">
             
             {/* Header: Avatar & Quick Info */}
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-8 border-b border-slate-100 dark:border-slate-700/50 pb-8">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-6 border-b border-base-200 pb-6">
               <div className="flex flex-col items-center">
                 <input
                   type="file"
@@ -127,7 +125,7 @@ const Profile = () => {
                   <img
                     src={authUser?.profilePic || "/logo.png"}
                     alt="profile"
-                    className="w-32 h-32 rounded-full object-cover border-4 border-slate-100 dark:border-slate-700 shadow-lg group-hover:border-primary transition-colors"
+                    className="w-24 h-24 rounded-full object-cover border-4 border-base-200 shadow-lg group-hover:border-primary transition-colors"
                   />
                   <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <span className="text-white text-sm font-medium">
@@ -139,24 +137,24 @@ const Profile = () => {
               
               <div className="flex-1 text-center sm:text-left mt-2">
                 <div className="flex items-center justify-center sm:justify-between mb-2">
-                  <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  <h2 className="text-3xl font-extrabold text-base-content tracking-tight">
                     {authUser?.fullName}
                   </h2>
                   {!isEditing && (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="hidden sm:block px-4 py-2 bg-primary/10 dark:bg-primary/10 text-primary dark:text-secondary font-semibold rounded-lg hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors"
+                      className="hidden sm:block px-4 py-2 bg-primary/10 text-primary font-semibold rounded-lg hover:bg-primary/20 transition-colors"
                     >
                       Edit Profile
                     </button>
                   )}
                 </div>
-                <p className="text-slate-500 dark:text-slate-400 font-medium">
+                <p className="text-base-content/70 font-medium">
                   {authUser?.username ? `@${authUser.username}` : authUser?.email}
                 </p>
                 
                 {authUser?.bio && (
-                  <p className="mt-4 text-slate-700 dark:text-slate-300 text-sm bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
+                  <p className="mt-4 text-base-content/90 text-sm bg-base-200 p-3 rounded-lg border border-base-300">
                     "{authUser.bio}"
                   </p>
                 )}
@@ -164,7 +162,7 @@ const Profile = () => {
                 {!isEditing && (
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="sm:hidden mt-4 px-6 py-2 bg-primary/10 dark:bg-primary/10 text-primary dark:text-secondary font-semibold rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors w-full"
+                    className="sm:hidden mt-4 px-6 py-2 bg-primary/10 text-primary font-semibold rounded-full hover:bg-primary/20 transition-colors w-full"
                   >
                     Edit Profile
                   </button>
@@ -174,65 +172,65 @@ const Profile = () => {
 
             {/* Profile Form / View */}
             {isEditing ? (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Full Name</label>
+                    <label className="block text-sm font-semibold text-base-content/90 mb-1">Full Name</label>
                     <input
                       type="text"
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white transition-all"
+                      className="w-full px-3 py-2 rounded-xl bg-base-200 border border-base-300 focus:ring-2 focus:ring-primary focus:border-primary text-base-content transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Username</label>
+                    <label className="block text-sm font-semibold text-base-content/90 mb-1">Username</label>
                     <div className="relative">
-                      <span className="absolute left-4 top-3 text-slate-400 font-bold">@</span>
+                      <span className="absolute left-4 top-3 text-base-content/50 font-bold">@</span>
                       <input
                         type="text"
                         name="username"
                         value={formData.username}
                         onChange={handleChange}
                         placeholder="your_handle"
-                        className="w-full pl-9 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white transition-all"
+                        className="w-full pl-9 pr-3 py-2 rounded-xl bg-base-200 border border-base-300 focus:ring-2 focus:ring-primary focus:border-primary text-base-content transition-all"
                       />
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Bio</label>
+                  <label className="block text-sm font-semibold text-base-content/90 mb-1">Bio</label>
                   <textarea
                     name="bio"
                     value={formData.bio}
                     onChange={handleChange}
                     maxLength="150"
                     placeholder="Tell us about yourself..."
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white transition-all min-h-25 resize-none"
+                    className="w-full px-3 py-2 rounded-xl bg-base-200 border border-base-300 focus:ring-2 focus:ring-primary focus:border-primary text-base-content transition-all min-h-15 resize-none"
                   ></textarea>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Phone Number</label>
+                    <label className="block text-sm font-semibold text-base-content/90 mb-1">Phone Number</label>
                     <input
                       type="text"
                       name="phoneNumber"
                       value={formData.phoneNumber}
                       onChange={handleChange}
                       placeholder="+1 (555) 000-0000"
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white transition-all"
+                      className="w-full px-3 py-2 rounded-xl bg-base-200 border border-base-300 focus:ring-2 focus:ring-primary focus:border-primary text-base-content transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Status Message</label>
+                    <label className="block text-sm font-semibold text-base-content/90 mb-1">Status Message</label>
                     <select
                       name="statusMessage"
                       value={formData.statusMessage}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white transition-all"
+                      className="w-full px-3 py-2 rounded-xl bg-base-200 border border-base-300 focus:ring-2 focus:ring-primary focus:border-primary text-base-content transition-all"
                     >
                       <option value="Available">🟢 Available</option>
                       <option value="Busy">🔴 Busy</option>
@@ -243,13 +241,13 @@ const Profile = () => {
                 </div>
 
                 {/* Privacy Settings */}
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-700/50">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Privacy Settings</h3>
-                  <div className="space-y-4">
-                    <label className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer">
+                <div className="pt-2 border-t border-base-200">
+                  <h3 className="text-sm font-bold text-base-content mb-2">Privacy Settings</h3>
+                  <div className="space-y-2">
+                    <label className="flex items-center justify-between p-3 bg-base-200 rounded-xl border border-base-300 cursor-pointer">
                       <div>
-                        <div className="font-semibold text-slate-800 dark:text-slate-200">Show Phone Number</div>
-                        <div className="text-xs text-slate-500">Allow other users to see your phone number</div>
+                        <div className="font-semibold text-base-content">Show Phone Number</div>
+                        <div className="text-xs text-base-content/70">Allow other users to see your phone number</div>
                       </div>
                       <input
                         type="checkbox"
@@ -259,10 +257,10 @@ const Profile = () => {
                         className="w-5 h-5 text-primary rounded focus:ring-primary"
                       />
                     </label>
-                    <label className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer">
+                    <label className="flex items-center justify-between p-3 bg-base-200 rounded-xl border border-base-300 cursor-pointer">
                       <div>
-                        <div className="font-semibold text-slate-800 dark:text-slate-200">Show Last Seen & Status</div>
-                        <div className="text-xs text-slate-500">Let others see when you were last active</div>
+                        <div className="font-semibold text-base-content">Show Last Seen & Status</div>
+                        <div className="text-xs text-base-content/70">Let others see when you were last active</div>
                       </div>
                       <input
                         type="checkbox"
@@ -275,18 +273,18 @@ const Profile = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-4 pt-6">
+                <div className="flex gap-4 pt-4">
                   <button
                     onClick={handleSaveProfile}
                     disabled={isUpdating}
-                    className="flex-1 py-3.5 bg-primary hover:bg-secondary text-white font-bold rounded-xl shadow-lg shadow-primary/30 transition-all disabled:opacity-50"
+                    className="flex-1 py-2 bg-primary hover:bg-secondary text-primary-content font-bold rounded-xl shadow-lg shadow-primary/30 transition-all disabled:opacity-50"
                   >
                     {isUpdating ? "Saving..." : "Save Changes"}
                   </button>
                   <button
                     onClick={() => setIsEditing(false)}
                     disabled={isUpdating}
-                    className="px-6 py-3.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl transition-all"
+                    className="px-6 py-2 bg-base-200 hover:bg-base-300 text-base-content font-bold rounded-xl transition-all"
                   >
                     Cancel
                   </button>
@@ -295,15 +293,15 @@ const Profile = () => {
             ) : (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="p-5 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Phone Number</p>
-                    <p className="text-slate-800 dark:text-slate-200 font-medium">
+                  <div className="p-5 bg-base-200 rounded-2xl border border-base-300">
+                    <p className="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-1">Phone Number</p>
+                    <p className="text-base-content font-medium">
                       {authUser?.phoneNumber || "Not set"}
                     </p>
                   </div>
-                  <div className="p-5 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Current Status</p>
-                    <p className="text-slate-800 dark:text-slate-200 font-medium flex items-center gap-2">
+                  <div className="p-5 bg-base-200 rounded-2xl border border-base-300">
+                    <p className="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-1">Current Status</p>
+                    <p className="text-base-content font-medium flex items-center gap-2">
                       <span className={`w-2 h-2 rounded-full ${
                         authUser?.statusMessage === "Available" ? "bg-green-500" :
                         authUser?.statusMessage === "Busy" ? "bg-red-500" :
@@ -314,54 +312,21 @@ const Profile = () => {
                   </div>
                 </div>
                 
-                <div className="p-5 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Account Info</p>
+                <div className="p-5 bg-base-200 rounded-2xl border border-base-300">
+                  <p className="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-1">Account Info</p>
                   <div className="space-y-2 mt-3">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-500">Member since</span>
-                      <span className="font-medium text-slate-800 dark:text-slate-200">{new Date(authUser?.createdAt).toLocaleDateString()}</span>
+                      <span className="text-base-content/70">Member since</span>
+                      <span className="font-medium text-base-content">{new Date(authUser?.createdAt).toLocaleDateString()}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-500">Email Address</span>
-                      <span className="font-medium text-slate-800 dark:text-slate-200">{authUser?.email}</span>
+                      <span className="text-base-content/70">Email Address</span>
+                      <span className="font-medium text-base-content">{authUser?.email}</span>
                     </div>
                   </div>
                 </div>
               </div>
             )}
-
-            {/* Appearance Section */}
-            <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700/50">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Appearance</h3>
-              <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                <div>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200">Color Theme</div>
-                  <div className="text-xs text-slate-500">Choose your favorite color palette</div>
-                </div>
-                <details className="dropdown dropdown-end" id="profile-theme-dropdown">
-                  <summary className="btn btn-sm btn-outline border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 cursor-pointer">
-                    {themes[colorTheme]?.name || "Theme"} <span className="opacity-50 text-xs ml-1">▼</span>
-                  </summary>
-                  <ul className="dropdown-content menu bg-base-100 dark:bg-slate-800 rounded-box z-1 w-48 p-2 shadow mt-2">
-                    {Object.keys(themes).map((themeKey) => (
-                      <li key={themeKey}>
-                        <a 
-                          onClick={() => {
-                            setColorTheme(themeKey);
-                            const dropdown = document.getElementById("profile-theme-dropdown");
-                            if (dropdown) dropdown.removeAttribute("open");
-                          }} 
-                          className={colorTheme === themeKey ? "bg-slate-200 dark:bg-slate-700 font-bold" : ""}
-                        >
-                          <div className="w-3 h-3 rounded-full mr-2 shrink-0" style={{ backgroundColor: themes[themeKey].primary }}></div>
-                          {themes[themeKey].name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              </div>
-            </div>
 
           </div>
         </div>
@@ -371,4 +336,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

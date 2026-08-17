@@ -66,17 +66,17 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen w-full bg-slate-50 dark:bg-slate-900 relative overflow-hidden transition-colors duration-300">
-      <div className="absolute top-0 left-0 w-full h-full opacity-5 dark:opacity-10 bg-linear-to-b from-primary to-transparent pointer-events-none" />
+    <div className="flex justify-center items-center h-screen w-full bg-base-200 relative overflow-hidden transition-colors duration-300">
+      <div className="absolute top-0 left-0 w-full h-full opacity-5 bg-linear-to-b from-primary to-transparent pointer-events-none" />
 
-      <div className="w-96 p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 shadow-2xl z-10 transition-colors duration-300">
-        <h1 className="text-3xl font-extrabold mb-2 text-slate-900 dark:text-white text-center tracking-tight">
+      <div className="w-96 p-8 rounded-2xl bg-base-100 border border-base-300 shadow-2xl z-10 transition-colors duration-300">
+        <h1 className="text-3xl font-extrabold mb-2 text-base-content text-center tracking-tight">
           Reset Password
         </h1>
 
         {step === 1 && (
           <>
-            <p className="text-slate-500 dark:text-slate-400 text-center mb-8 font-medium text-sm">
+            <p className="text-base-content/70 text-center mb-8 font-medium text-sm">
               Enter your email to receive a 6-digit OTP
             </p>
             <form onSubmit={handleSendOtp} className="space-y-4">
@@ -86,12 +86,12 @@ const ForgotPassword = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-400"
+                className="w-full px-4 py-3 rounded-xl bg-base-200 border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-base-content placeholder-base-content/50"
               />
               <button
                 disabled={isLoading}
                 type="submit"
-                className="w-full py-3.5 mt-2 bg-primary hover:bg-secondary hover:-translate-y-0.5 transform transition-all duration-200 rounded-xl font-bold text-white shadow-lg shadow-primary/30 disabled:opacity-50 disabled:hover:translate-y-0"
+                className="w-full py-3.5 mt-2 bg-primary hover:bg-secondary hover:-translate-y-0.5 transform transition-all duration-200 rounded-xl font-bold text-primary-content shadow-lg shadow-primary/30 disabled:opacity-50 disabled:hover:translate-y-0"
               >
                 {isLoading ? "Sending..." : "Send OTP"}
               </button>
@@ -101,7 +101,7 @@ const ForgotPassword = () => {
 
         {step === 2 && (
           <>
-            <p className="text-slate-500 dark:text-slate-400 text-center mb-8 font-medium text-sm">
+            <p className="text-base-content/70 text-center mb-8 font-medium text-sm">
               Enter the 6-digit OTP sent to {email}
             </p>
             <form onSubmit={handleVerifyOtp} className="space-y-4">
@@ -112,12 +112,12 @@ const ForgotPassword = () => {
                 onChange={(e) => setOtp(e.target.value)}
                 required
                 maxLength={6}
-                className="w-full text-center tracking-widest text-2xl font-bold px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-400"
+                className="w-full text-center tracking-widest text-2xl font-bold px-4 py-3 rounded-xl bg-base-200 border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-base-content placeholder-base-content/50"
               />
               <button
                 disabled={isLoading}
                 type="submit"
-                className="w-full py-3.5 mt-2 bg-primary hover:bg-secondary hover:-translate-y-0.5 transform transition-all duration-200 rounded-xl font-bold text-white shadow-lg shadow-primary/30 disabled:opacity-50 disabled:hover:translate-y-0"
+                className="w-full py-3.5 mt-2 bg-primary hover:bg-secondary hover:-translate-y-0.5 transform transition-all duration-200 rounded-xl font-bold text-primary-content shadow-lg shadow-primary/30 disabled:opacity-50 disabled:hover:translate-y-0"
               >
                 {isLoading ? "Verifying..." : "Verify OTP"}
               </button>
@@ -127,7 +127,7 @@ const ForgotPassword = () => {
 
         {step === 3 && (
           <>
-            <p className="text-slate-500 dark:text-slate-400 text-center mb-8 font-medium text-sm">
+            <p className="text-base-content/70 text-center mb-8 font-medium text-sm">
               Create a new password
             </p>
             <form onSubmit={handleResetPassword} className="space-y-4">
@@ -138,7 +138,7 @@ const ForgotPassword = () => {
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-400"
+                className="w-full px-4 py-3 rounded-xl bg-base-200 border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-base-content placeholder-base-content/50"
               />
               <button
                 disabled={isLoading}
@@ -154,7 +154,7 @@ const ForgotPassword = () => {
         <div className="mt-8 text-center">
           <Link
             to="/login"
-            className="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-slate-900 dark:hover:text-white transition-colors"
+            className="text-base-content/70 text-sm font-medium hover:text-base-content transition-colors"
           >
             ← Back to Login
           </Link>

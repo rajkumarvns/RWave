@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import ForgotPassword from "./pages/ForgotPassword";
 import { useTheme } from "./context/ThemeContext";
+import SiteHeader from "./components/SiteHeader";
 
 function App() {
   const { authUser } = useAuth();
@@ -17,7 +18,8 @@ function App() {
   useTheme(); 
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 transition-colors duration-300">
+    <div className="min-h-screen bg-base-100 text-base-content transition-colors duration-300 flex flex-col">
+      <SiteHeader />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/chat" element={authUser ? <Home /> : <Navigate to="/login" />} />

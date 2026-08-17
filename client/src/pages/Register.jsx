@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 const Register = () => {
   const [fullName, setFullName] = useState("");
@@ -42,19 +43,29 @@ const Register = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen w-full bg-slate-50 dark:bg-slate-900 relative overflow-hidden transition-colors duration-300">
-      <div className="absolute top-0 left-0 w-full h-full opacity-5 dark:opacity-10 bg-linear-to-b from-primary to-transparent pointer-events-none" />
+    <div className="flex justify-center items-center h-screen w-full bg-base-200 relative overflow-hidden transition-colors duration-300">
+      <div className="absolute top-0 left-0 w-full h-full opacity-5 bg-linear-to-b from-primary to-transparent pointer-events-none" />
 
-      <div className="w-96 p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 shadow-2xl z-10 transition-colors duration-300">
-        <h1 className="text-4xl font-extrabold mb-2 text-primary dark:text-primary text-center tracking-tight">
+      <motion.div 
+        className="w-96 p-8 rounded-2xl bg-base-100 border border-base-300 shadow-2xl z-10 transition-colors duration-300"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
+        <h1 className="text-4xl font-extrabold mb-2 text-primary text-center tracking-tight">
           RWave
         </h1>
-        <p className="text-slate-500 dark:text-slate-400 text-center mb-6 font-medium">
+        <p className="text-base-content/70 text-center mb-6 font-medium">
           Create your account
         </p>
 
         <form onSubmit={handleRegister} className="space-y-4">
-          <div className="flex flex-col items-center mb-4">
+          <motion.div 
+            className="flex flex-col items-center mb-4"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             <label
               htmlFor="avatar-upload"
               className="relative cursor-pointer group"
@@ -62,7 +73,7 @@ const Register = () => {
               <img
                 src={profilePic || "/logo.png"}
                 alt="Profile Preview"
-                className="w-24 h-24 rounded-full object-cover border-4 border-slate-700 group-hover:border-primary transition-colors"
+                className="w-24 h-24 rounded-full object-cover border-4 border-base-300 group-hover:border-primary transition-colors"
               />
               <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <span className="text-white text-xs">Upload</span>
@@ -75,43 +86,60 @@ const Register = () => {
               className="hidden"
               onChange={handleImageChange}
             />
-          </div>
+          </motion.div>
 
-          <input
+          <motion.input
             type="text"
             placeholder="Full Name"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-400"
+            className="input w-full px-4 py-3 rounded-xl bg-base-200 border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base-content placeholder:text-base-content/50"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           />
-          <input
+          <motion.input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-400"
+            className="input w-full px-4 py-3 rounded-xl bg-base-200 border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base-content placeholder:text-base-content/50"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           />
-          <input
+          <motion.input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-400"
+            className="input w-full px-4 py-3 rounded-xl bg-base-200 border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base-content placeholder:text-base-content/50"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
           />
-          <button
+          <motion.button
             type="submit"
             disabled={isRegistering}
-            className="w-full py-3.5 mt-2 bg-primary hover:bg-secondary hover:-translate-y-0.5 transform transition-all duration-200 rounded-xl font-bold text-white shadow-lg shadow-primary/30 disabled:opacity-50 disabled:hover:translate-y-0"
+            className="btn btn-primary btn-gradient w-full py-3.5 mt-2 text-primary-content font-bold rounded-xl shadow-lg shadow-primary/30 transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:hover:translate-y-0 disabled:cursor-not-allowed disabled:transform-none"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
           >
             {isRegistering ? "Creating..." : "Sign Up"}
-          </button>
+          </motion.button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-slate-600 dark:text-slate-400 text-sm">
+        <motion.div 
+          className="mt-6 text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          <p className="text-base-content/80 text-sm">
             Already have an account?{" "}
             <Link
               to="/login"
@@ -120,8 +148,8 @@ const Register = () => {
               Log in
             </Link>
           </p>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

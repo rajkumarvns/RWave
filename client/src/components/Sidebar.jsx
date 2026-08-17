@@ -48,7 +48,7 @@ const Sidebar = () => {
   return (
     <div className="relative flex-shrink-0 h-full z-30 w-[84px]">
       <motion.div 
-        className="absolute top-0 left-0 h-full bg-white/90 dark:bg-[#111b21]/95 backdrop-blur-xl border-r border-slate-200 dark:border-slate-700 flex flex-col shadow-2xl overflow-hidden"
+        className="absolute top-0 left-0 h-full bg-base-100/95 backdrop-blur-xl border-r border-base-300 flex flex-col shadow-2xl overflow-hidden"
         initial="collapsed"
         animate={isHovered ? "expanded" : "collapsed"}
         variants={sidebarVariants}
@@ -57,16 +57,16 @@ const Sidebar = () => {
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
         {/* Header */}
-        <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/20 w-[320px]">
+        <div className="p-4 border-b border-base-300 flex items-center justify-between bg-base-200/50 w-[320px]">
           <Link to="/profile" className="flex items-center gap-4 cursor-pointer">
             <div className="avatar indicator ml-1">
               <span className="indicator-item badge badge-success badge-xs"></span>
-              <div className="w-12 h-12 rounded-full border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div className="w-12 h-12 rounded-full border border-base-300 shadow-sm">
                 <img src={authUser?.profilePic || "/logo.png"} alt="avatar" />
               </div>
             </div>
             <motion.h2 
-              className="font-bold text-slate-900 dark:text-slate-50 truncate w-48"
+              className="font-bold text-base-content truncate w-48"
               animate={{ opacity: isHovered ? 1 : 0 }}
             >
               {authUser?.fullName}
@@ -76,13 +76,13 @@ const Sidebar = () => {
 
         {/* Search */}
         <div className="p-4 bg-transparent relative w-[320px]">
-          <div className="absolute left-8 top-7 text-slate-400">🔍</div>
+          <div className="absolute left-8 top-7 text-base-content/50">🔍</div>
           <motion.input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search conversations..."
-            className="input input-bordered w-[288px] pl-10 rounded-xl bg-slate-100 dark:bg-slate-800/50 border-transparent focus:border-primary focus:bg-white dark:focus:bg-slate-800 text-sm"
+            className="input input-bordered w-[288px] pl-10 rounded-xl bg-base-200 border-transparent focus:border-primary focus:bg-base-100 text-sm"
             animate={{ opacity: isHovered ? 1 : 0 }}
           />
         </div>
@@ -105,7 +105,7 @@ const Sidebar = () => {
                     transition={{ delay: index * 0.05 }}
                     onClick={() => setSelectedUser(user)}
                     className={`p-3 rounded-xl cursor-pointer transition-colors duration-200 flex items-center gap-4 relative overflow-hidden w-[304px]
-                    ${isSelected ? "bg-slate-100 dark:bg-slate-800" : "hover:bg-slate-50 dark:hover:bg-slate-800/50"}
+                    ${isSelected ? "bg-base-200" : "hover:bg-base-200/50"}
                   `}
                   >
                     {isSelected && (
@@ -114,7 +114,7 @@ const Sidebar = () => {
 
                     <div className="avatar indicator ml-1 flex-shrink-0">
                       {isOnline && <span className="indicator-item badge badge-success badge-xs"></span>}
-                      <div className={`w-12 h-12 rounded-full transition-transform ${isSelected ? "border-2 border-primary" : "border border-slate-200 dark:border-slate-700"}`}>
+                      <div className={`w-12 h-12 rounded-full transition-transform ${isSelected ? "border-2 border-primary" : "border border-base-300"}`}>
                         <img src={user.profilePic || "/logo.png"} alt="user" />
                       </div>
                     </div>
@@ -123,10 +123,10 @@ const Sidebar = () => {
                       className="flex-1 min-w-0 pr-2"
                       animate={{ opacity: isHovered ? 1 : 0 }}
                     >
-                      <h3 className={`font-semibold text-sm truncate ${isSelected ? "text-primary dark:text-secondary" : "text-slate-900 dark:text-slate-50"}`}>
+                      <h3 className={`font-semibold text-sm truncate ${isSelected ? "text-primary" : "text-base-content"}`}>
                         {user.fullName}
                       </h3>
-                      <p className={`text-xs mt-0.5 truncate ${isOnline ? "text-secondary dark:text-secondary font-medium" : "text-slate-500 dark:text-slate-400"}`}>
+                      <p className={`text-xs mt-0.5 truncate ${isOnline ? "text-secondary font-medium" : "text-base-content/70"}`}>
                         {isOnline ? "Online now" : "Offline"}
                       </p>
                     </motion.div>
@@ -137,12 +137,12 @@ const Sidebar = () => {
         </div>
 
         {/* Footer */}
-        <div className="mt-auto p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col items-start gap-4 bg-slate-50/50 dark:bg-slate-800/20 w-[320px]">
-          <Link to="/settings" className="flex items-center gap-4 p-2 text-slate-500 hover:text-primary dark:hover:text-secondary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all ml-1 overflow-hidden w-[130px]">
+        <div className="mt-auto p-4 border-t border-base-300 flex flex-col items-start gap-4 bg-base-200/50 w-[320px]">
+          <Link to="/settings" className="flex items-center gap-4 p-2 text-base-content/70 hover:text-primary hover:bg-base-200 rounded-xl transition-all ml-1 overflow-hidden w-[130px]">
             <span className="text-xl flex-shrink-0">⚙️</span>
             <motion.span animate={{ opacity: isHovered ? 1 : 0 }} className="font-semibold text-sm whitespace-nowrap">Settings</motion.span>
           </Link>
-          <button onClick={handleLogout} className="flex items-center gap-4 p-2 text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all ml-1 overflow-hidden w-[130px]">
+          <button onClick={handleLogout} className="flex items-center gap-4 p-2 text-base-content/70 hover:text-error hover:bg-error/10 rounded-xl transition-all ml-1 overflow-hidden w-[130px]">
             <span className="text-xl flex-shrink-0">⎋</span>
             <motion.span animate={{ opacity: isHovered ? 1 : 0 }} className="font-semibold text-sm whitespace-nowrap">Logout</motion.span>
           </button>
