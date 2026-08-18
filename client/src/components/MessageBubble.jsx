@@ -89,7 +89,7 @@ const MessageBubble = ({ message, isSent }) => {
         t.visible ? 'animate-enter' : 'animate-leave'
       } max-w-md w-full bg-base-100 shadow-lg rounded-2xl pointer-events-auto flex ring-1 ring-black/5 dark:ring-white/10 p-4`}>
         <div className="flex-1 w-0">
-          <div className="flex flex-col gap-3 min-w-[200px]">
+          <div className="flex flex-col gap-3 min-w-50">
             <p className="text-sm font-medium text-base-content">
               Delete this message?
             </p>
@@ -190,7 +190,7 @@ const MessageBubble = ({ message, isSent }) => {
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.15 }}
               style={{ top: contextMenu.mouseY, left: contextMenu.mouseX }}
-              className="fixed z-50 bg-base-100 border border-base-300 rounded-xl shadow-xl py-2 min-w-[160px] glass-panel"
+              className="fixed z-50 bg-base-100 border border-base-300 rounded-xl shadow-xl py-2 min-w-40 glass-panel"
             >
               {isSent && (
                 <button
