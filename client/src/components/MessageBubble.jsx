@@ -73,7 +73,7 @@ const MessageBubble = ({ message, isSent }) => {
         withCredentials: true,
       });
       setDeleted(true);
-      toast.success("Message deleted");
+      toast.success("Message deleted", { duration: 2000 });
     } catch (error) {
       console.error("Failed to delete message", error);
       setIsDeleting(false);
@@ -113,56 +113,63 @@ const MessageBubble = ({ message, isSent }) => {
           </div>
         </div>
       </div>
-    ), { duration: 5000, position: 'top-center' });
+    ), { duration: 2000, position: 'top-center' });
   };
 
   if (deleted) return null;
 
   return (
     <>
-      <motion.div
-        layout
-        initial={{ opacity: 0, y: 20, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        onContextMenu={handleContextMenu}
-        className={`chat ${isSent ? "chat-sender" : "chat-receiver"} relative mb-2 w-full`}
-      >
-        <motion.div
-          animate={
-            isDisintegrating
-              ? { opacity: 0, scale: 0.5, filter: "blur(10px)", rotate: 12 }
-              : isDeleting
-              ? { opacity: 0.5, scale: 0.95 }
-              : { opacity: 1, scale: 1, filter: "blur(0px)", rotate: 0 }
-          }
-          transition={{ duration: 0.3 }}
-          className={`chat-bubble cursor-context-menu ${
-            isSent
-              ? "bg-primary text-primary-content"
-              : "bg-base-100 text-base-content"
-          } ${message.isGhost && !isDisintegrating ? "animate-pulse" : ""}`}
-        >
-          <div className="chat-header opacity-50 text-xs mb-1">
+      <div className={`flex ${isSent ? "justify-end" : "justify-start"} mb-4 px-4`}>
+        <div className={`flex flex-col ${isSent ? "items-end" : "items-start"}`}>
+          {/* Message Bubble */}
+          <motion.div
+            layout
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            onContextMenu={handleContextMenu}
+            className={`chat ${isSent ? "chat-end" : "chat-start"} relative`}
+          >
+            <motion.div
+              animate={
+                isDisintegrating
+                  ? { opacity: 0, scale: 0.5, filter: "blur(10px)", rotate: 12 }
+                  : isDeleting
+                  ? { opacity: 0.5, scale: 0.95 }
+                  : { opacity: 1, scale: 1, filter: "blur(0px)", rotate: 0 }
+              }
+              transition={{ duration: 0.3 }}
+              className={`chat-bubble cursor-context-menu max-w-xs ${
+                isSent
+                  ? "bg-primary text-primary-content"
+                  : "bg-base-100 text-base-content"
+              } ${message.isGhost && !isDisintegrating ? "animate-pulse" : ""}`}
+            >
+              {message.image && (
+                <img
+                  src={message.image}
+                  alt="attachment"
+                  className="rounded-lg mb-2 max-w-full max-h-60 object-cover border border-black/10 dark:border-white/10"
+                />
+              )}
+              {message.text && (
+                <p className="text-[15px] font-medium leading-relaxed tracking-wide">{message.text}</p>
+              )}
+              <div
+                className={`text-[11px] font-semibold mt-1.5 flex items-center justify-end gap-1 ${isSent ? "text-primary-content/80" : "text-base-content/50"}`}
+              >
+                {message.isGhost && <span className="mr-1 drop-shadow-sm">👻</span>}
+                {isSent && <span className="text-[14px] ml-0.5">✓✓</span>}
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Time Below Message */}
+          <div className={`text-xs font-semibold mt-1 ${isSent ? "text-primary" : "text-base-content/70"}`}>
             {formatTime(message.createdAt)}
           </div>
-          {message.image && (
-            <img
-              src={message.image}
-              alt="attachment"
-              className="rounded-lg mb-2 max-w-full max-h-60 object-cover border border-black/10 dark:border-white/10"
-            />
-          )}
-          {message.text && (
-            <p className="text-[15px] font-medium leading-relaxed tracking-wide">{message.text}</p>
-          )}
-          <div
-            className={`text-[11px] font-semibold mt-1.5 flex items-center justify-end gap-1 ${isSent ? "text-primary-content/80" : "text-base-content/50"}`}
-          >
-            {message.isGhost && <span className="mr-1 drop-shadow-sm">👻</span>}
-            {isSent && <span className="text-[14px] ml-0.5">✓✓</span>}
-          </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* Right-Click Context Menu */}
       <AnimatePresence>

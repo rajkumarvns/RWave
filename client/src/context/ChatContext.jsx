@@ -116,6 +116,17 @@ export const ChatProvider = ({ children }) => {
     }
   }, [selectedUser]);
 
+  // Polling interval - fetch messages every 2 seconds when on chat
+  useEffect(() => {
+    if (!selectedUser) return;
+
+    const pollingInterval = setInterval(() => {
+      getMessages(selectedUser._id);
+    }, 2000); // 2 second polling interval
+
+    return () => clearInterval(pollingInterval);
+  }, [selectedUser]);
+
   return (
     <ChatContext.Provider
       value={{
