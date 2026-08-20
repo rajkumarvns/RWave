@@ -17,7 +17,7 @@ const Settings = () => {
     )
       return;
     try {
-      await axios.delete("http://localhost:4500/api/auth/account", {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/auth/account`, {
         withCredentials: true,
       });
       setAuthUser(null);

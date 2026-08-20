@@ -16,7 +16,7 @@ const ForgotPassword = () => {
     if (!email) return;
     setIsLoading(true);
     try {
-      await axios.post("http://localhost:4500/api/auth/forgot-password", {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/auth/forgot-password`, {
         email,
       });
       toast.success("OTP sent to your email!");
@@ -33,7 +33,7 @@ const ForgotPassword = () => {
     if (!otp) return;
     setIsLoading(true);
     try {
-      await axios.post("http://localhost:4500/api/auth/verify-otp", {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/auth/verify-otp`, {
         email,
         otp,
       });
@@ -51,7 +51,7 @@ const ForgotPassword = () => {
     if (!newPassword) return;
     setIsLoading(true);
     try {
-      await axios.post("http://localhost:4500/api/auth/reset-password", {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/auth/reset-password`, {
         email,
         otp,
         newPassword,

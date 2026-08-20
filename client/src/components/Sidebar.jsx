@@ -15,7 +15,7 @@ const Sidebar = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:4500/api/users", {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/users`, {
           withCredentials: true,
         });
         setUsers(response.data);
@@ -29,7 +29,7 @@ const Sidebar = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:4500/api/auth/logout",
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/auth/logout`,
         {},
         { withCredentials: true },
       );

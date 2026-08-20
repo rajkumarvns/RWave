@@ -27,7 +27,7 @@ const Register = () => {
     try {
       setIsRegistering(true);
       const response = await axios.post(
-        "http://localhost:4500/api/auth/register",
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/auth/register`,
         { fullName, email, password, profilePic },
         {
           withCredentials: true,

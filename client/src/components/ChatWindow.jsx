@@ -140,7 +140,7 @@ const ChatWindow = () => {
       return;
     try {
       await axios.delete(
-        `http://localhost:4500/api/messages/clear/${selectedUser._id}`,
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/messages/clear/${selectedUser._id}`,
         {
           withCredentials: true,
         },
@@ -166,7 +166,7 @@ const ChatWindow = () => {
   const handleBlockUser = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:4500/api/auth/block/${selectedUser._id}`,
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/auth/block/${selectedUser._id}`,
         {},
         { withCredentials: true }
       );
@@ -181,7 +181,7 @@ const ChatWindow = () => {
   const handleUnblockUser = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:4500/api/auth/unblock/${selectedUser._id}`,
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/auth/unblock/${selectedUser._id}`,
         {},
         { withCredentials: true }
       );

@@ -31,7 +31,7 @@ export const ChatProvider = ({ children }) => {
   // Handle Socket Connection when user logs in/out
   useEffect(() => {
     if (authUser) {
-      const newSocket = io("http://localhost:4500", {
+      const newSocket = io(import.meta.env.VITE_API_BASE_URL || "http://localhost:4500", {
         query: {
           userId: authUser._id,
         },
@@ -79,7 +79,7 @@ export const ChatProvider = ({ children }) => {
   const getMessages = async (userId) => {
     try {
       const res = await axios.get(
-        `http://localhost:4500/api/messages/${userId}`,
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/messages/${userId}`,
         {
           withCredentials: true,
         },
@@ -95,7 +95,7 @@ export const ChatProvider = ({ children }) => {
     if (!selectedUser) return;
     try {
       const res = await axios.post(
-        `http://localhost:4500/api/messages/send/${selectedUser._id}`,
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/messages/send/${selectedUser._id}`,
         messageData,
         {
           withCredentials: true,

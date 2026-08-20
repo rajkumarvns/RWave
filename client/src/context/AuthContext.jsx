@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await axios.get("http://localhost:4500/api/auth/check", {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/auth/check`, {
           withCredentials: true,
         });
         setAuthUser(res.data);

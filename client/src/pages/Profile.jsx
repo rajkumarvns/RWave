@@ -41,7 +41,7 @@ const Profile = () => {
       try {
         setIsUpdating(true);
         const response = await axios.put(
-          "http://localhost:4500/api/auth/profile",
+          `${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/auth/profile`,
           { profilePic: base64Image },
           { withCredentials: true }
         );

@@ -15,7 +15,7 @@ const Login = () => {
     try {
       // Send the request to our backend API
       const response = await axios.post(
-        "http://localhost:4500/api/auth/login",
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/auth/login`,
         { email, password },
         {
           withCredentials: true, // Extremely important: tells Axios to save the JWT cookie!

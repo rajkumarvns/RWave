@@ -23,7 +23,7 @@ const MessageBubble = ({ message, isSent }) => {
             setDeleted(true);
             // We can also trigger the backend delete here for safety
             if (isSent) {
-              axios.delete(`http://localhost:4500/api/messages/${message._id}`, { withCredentials: true }).catch(() => {});
+              axios.delete(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/messages/${message._id}`, { withCredentials: true }).catch(() => {});
             }
           }, 1000); // Wait for animation to finish
         }, remainingTime);
@@ -69,7 +69,7 @@ const MessageBubble = ({ message, isSent }) => {
   const executeDelete = async () => {
     try {
       setIsDeleting(true);
-      await axios.delete(`http://localhost:4500/api/messages/${message._id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:4500"}/api/messages/${message._id}`, {
         withCredentials: true,
       });
       setDeleted(true);
