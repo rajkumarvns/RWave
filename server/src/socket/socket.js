@@ -2,52 +2,62 @@ import { Server } from "socket.io";
 import http from "http";
 import express from "express";
 
-
 const app = express();
 const server = http.createServer(app);
+
 const io = new Server(server, {
   cors: {
     origin: process.env.CLIENT_URL || "http://localhost:5173",
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
+
+const userSocketMap = {}; // { userId: socketId }
 
 export const getReceiverSocketId = (receiverId) => {
   return userSocketMap[receiverId];
 };
 
-const userSocketMap = {}; // {userId: socketId}
-
 io.on("connection", (socket) => {
-  console.log("a user connected", socket.id);
+  console.log("A user connected:", socket.id);
 
-  // When a user connects, they send their userId in the query
+  // Get userId from socket connection
   const userId = socket.handshake.query.userId;
+
   if (userId && userId !== "undefined") {
     userSocketMap[userId] = socket.id;
   }
 
-  // Broadcast to everyone the current list of online users
+  // Send online users
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-  // Typing status events
+  // Typing
   socket.on("typing", ({ receiverId }) => {
     const receiverSocketId = getReceiverSocketId(receiverId);
+
     if (receiverSocketId) {
-      io.to(receiverSocketId).emit("typing-status", { senderId: userId });
+      io.to(receiverSocketId).emit("typing-status", {
+        senderId: userId,
+      });
     }
   });
 
+  // Stop typing
   socket.on("stop-typing", ({ receiverId }) => {
     const receiverSocketId = getReceiverSocketId(receiverId);
+
     if (receiverSocketId) {
-      io.to(receiverSocketId).emit("stop-typing-status", { senderId: userId });
+      io.to(receiverSocketId).emit("stop-typing-status", {
+        senderId: userId,
+      });
     }
   });
 
-  // Read receipts events
+  // Message seen
   socket.on("message-seen", ({ messageId, receiverId }) => {
     const receiverSocketId = getReceiverSocketId(receiverId);
+
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("message-status-update", {
         messageId,
@@ -56,11 +66,14 @@ io.on("connection", (socket) => {
     }
   });
 
-  // Handle disconnect
+  // Disconnect
   socket.on("disconnect", () => {
-    console.log("user disconnected", socket.id);
-    delete userSocketMap[userId];
-    // Update everyone with the new online list
+    console.log("User disconnected:", socket.id);
+
+    if (userId && userId !== "undefined") {
+      delete userSocketMap[userId];
+    }
+
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
