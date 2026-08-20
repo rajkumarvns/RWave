@@ -19,6 +19,7 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+app.set("trust proxy", 1);
 app.use(helmet());
 
 // Rate Limiting
