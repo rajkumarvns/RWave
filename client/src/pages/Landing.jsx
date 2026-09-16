@@ -10,7 +10,7 @@ const Landing = () => {
   if (authUser) return <Navigate to="/chat" />;
 
   return (
-    <div className="flex flex-col min-h-screen bg-base-200 relative overflow-hidden font-sans transition-colors duration-500">
+    <div className="flex flex-col h-[calc(100vh-64px)] bg-base-200 relative overflow-hidden font-sans transition-colors duration-500">
       {/* Decorative Wave Background */}
       <div 
         className="absolute top-0 left-0 w-full h-[220px] z-0 transition-colors duration-500 bg-primary/20" 

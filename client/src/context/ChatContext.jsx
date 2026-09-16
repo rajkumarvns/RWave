@@ -56,8 +56,8 @@ export const ChatProvider = ({ children }) => {
     socket?.on("receive-message", (newMessage) => {
       if (
         selectedUser &&
-        (newMessage.senderId === selectedUser._id ||
-          newMessage.receiverId === selectedUser._id)
+        (String(newMessage.senderId) === String(selectedUser._id) ||
+         String(newMessage.receiverId) === String(selectedUser._id))
       ) {
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       }
@@ -116,16 +116,7 @@ export const ChatProvider = ({ children }) => {
     }
   }, [selectedUser]);
 
-  // Polling interval - fetch messages every 2 seconds when on chat
-  useEffect(() => {
-    if (!selectedUser) return;
 
-    const pollingInterval = setInterval(() => {
-      getMessages(selectedUser._id);
-    }, 2000); // 2 second polling interval
-
-    return () => clearInterval(pollingInterval);
-  }, [selectedUser]);
 
   return (
     <ChatContext.Provider

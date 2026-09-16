@@ -120,8 +120,8 @@ const MessageBubble = ({ message, isSent }) => {
 
   return (
     <>
-      <div className={`flex ${isSent ? "justify-end" : "justify-start"} mb-4 px-4`}>
-        <div className={`flex flex-col ${isSent ? "items-end" : "items-start"}`}>
+      <div className={`flex shrink-0 ${isSent ? "justify-end" : "justify-start"} mb-4 px-1 md:px-4 w-full overflow-hidden`}>
+        <div className={`flex flex-col max-w-full ${isSent ? "items-end" : "items-start"}`}>
           {/* Message Bubble */}
           <motion.div
             layout
@@ -139,7 +139,7 @@ const MessageBubble = ({ message, isSent }) => {
                   : { opacity: 1, scale: 1, filter: "blur(0px)", rotate: 0 }
               }
               transition={{ duration: 0.3 }}
-              className={`chat-bubble cursor-context-menu max-w-xs ${
+              className={`chat-bubble cursor-context-menu max-w-[85vw] sm:max-w-md break-words whitespace-pre-wrap ${
                 isSent
                   ? "bg-primary text-primary-content"
                   : "bg-base-100 text-base-content"
@@ -153,7 +153,7 @@ const MessageBubble = ({ message, isSent }) => {
                 />
               )}
               {message.text && (
-                <p className="text-[15px] font-medium leading-relaxed tracking-wide">{message.text}</p>
+                <p className="text-[15px] font-medium leading-relaxed tracking-wide break-words">{message.text}</p>
               )}
               <div
                 className={`text-[11px] font-semibold mt-1.5 flex items-center justify-end gap-1 ${isSent ? "text-primary-content/80" : "text-base-content/50"}`}

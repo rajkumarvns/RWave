@@ -43,7 +43,7 @@ const Register = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen w-full bg-base-200 relative overflow-hidden transition-colors duration-300">
+    <div className="flex justify-center items-center h-[calc(100vh-64px)] w-full bg-base-200 relative overflow-hidden transition-colors duration-300">
       <div className="absolute top-0 left-0 w-full h-full opacity-5 bg-linear-to-b from-primary to-transparent pointer-events-none" />
 
       <motion.div 

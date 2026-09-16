@@ -11,6 +11,13 @@ const Sidebar = () => {
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -46,11 +53,11 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="relative flex-shrink-0 h-full z-30 w-[84px]">
+    <div className={`relative flex-shrink-0 h-full z-30 ${isMobile ? 'w-[320px]' : 'w-[84px]'}`}>
       <motion.div 
         className="absolute top-0 left-0 h-full bg-base-100/95 backdrop-blur-xl border-r border-base-300 flex flex-col shadow-2xl overflow-hidden"
         initial="collapsed"
-        animate={isHovered ? "expanded" : "collapsed"}
+        animate={(isHovered || isMobile) ? "expanded" : "collapsed"}
         variants={sidebarVariants}
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
@@ -67,7 +74,7 @@ const Sidebar = () => {
             </div>
             <motion.h2 
               className="font-bold text-base-content truncate w-48"
-              animate={{ opacity: isHovered ? 1 : 0 }}
+              animate={{ opacity: (isHovered || isMobile) ? 1 : 0 }}
             >
               {authUser?.fullName}
             </motion.h2>
@@ -83,7 +90,7 @@ const Sidebar = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search conversations..."
             className="input input-bordered w-[288px] pl-10 rounded-xl bg-base-200 border-transparent focus:border-primary focus:bg-base-100 text-sm"
-            animate={{ opacity: isHovered ? 1 : 0 }}
+            animate={{ opacity: (isHovered || isMobile) ? 1 : 0 }}
           />
         </div>
 
@@ -103,7 +110,11 @@ const Sidebar = () => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ delay: index * 0.05 }}
-                    onClick={() => setSelectedUser(user)}
+                    onClick={() => {
+                      setSelectedUser(user);
+                      const drawer = document.getElementById("mobile-sidebar-drawer");
+                      if (drawer) drawer.checked = false;
+                    }}
                     className={`p-3 rounded-xl cursor-pointer transition-colors duration-200 flex items-center gap-4 relative overflow-hidden w-[304px]
                     ${isSelected ? "bg-base-200" : "hover:bg-base-200/50"}
                   `}
@@ -121,7 +132,7 @@ const Sidebar = () => {
 
                     <motion.div 
                       className="flex-1 min-w-0 pr-2"
-                      animate={{ opacity: isHovered ? 1 : 0 }}
+                      animate={{ opacity: (isHovered || isMobile) ? 1 : 0 }}
                     >
                       <h3 className={`font-semibold text-sm truncate ${isSelected ? "text-primary" : "text-base-content"}`}>
                         {user.fullName}
@@ -140,11 +151,11 @@ const Sidebar = () => {
         <div className="mt-auto p-4 border-t border-base-300 flex flex-col items-start gap-4 bg-base-200/50 w-[320px]">
           <Link to="/settings" className="flex items-center gap-4 p-2 text-base-content/70 hover:text-primary hover:bg-base-200 rounded-xl transition-all ml-1 overflow-hidden w-[130px]">
             <span className="text-xl flex-shrink-0">⚙️</span>
-            <motion.span animate={{ opacity: isHovered ? 1 : 0 }} className="font-semibold text-sm whitespace-nowrap">Settings</motion.span>
+            <motion.span animate={{ opacity: (isHovered || isMobile) ? 1 : 0 }} className="font-semibold text-sm whitespace-nowrap">Settings</motion.span>
           </Link>
           <button onClick={handleLogout} className="flex items-center gap-4 p-2 text-base-content/70 hover:text-error hover:bg-error/10 rounded-xl transition-all ml-1 overflow-hidden w-[130px]">
             <span className="text-xl flex-shrink-0">⎋</span>
-            <motion.span animate={{ opacity: isHovered ? 1 : 0 }} className="font-semibold text-sm whitespace-nowrap">Logout</motion.span>
+            <motion.span animate={{ opacity: (isHovered || isMobile) ? 1 : 0 }} className="font-semibold text-sm whitespace-nowrap">Logout</motion.span>
           </button>
         </div>
       </motion.div>

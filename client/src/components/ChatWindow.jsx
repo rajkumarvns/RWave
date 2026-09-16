@@ -28,9 +28,23 @@ const ChatWindow = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [isGhostMode, setIsGhostMode] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -41,6 +55,11 @@ const ChatWindow = () => {
   if (!selectedUser) {
     return (
       <div className="flex-1 flex items-center justify-center bg-base-200 transition-colors duration-300 relative overflow-hidden">
+        <div className="absolute top-4 left-4 lg:hidden z-50">
+          <label htmlFor="mobile-sidebar-drawer" className="btn btn-circle btn-ghost bg-base-100 shadow-md drawer-button">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
+          </label>
+        </div>
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
@@ -92,25 +111,20 @@ const ChatWindow = () => {
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
 
+      // A pleasant UI "pop" sound
       oscillator.type = "sine";
-      oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(
-        300,
-        audioCtx.currentTime + 0.15,
-      );
+      oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.05);
 
       gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.02);
-      gainNode.gain.exponentialRampToValueAtTime(
-        0.01,
-        audioCtx.currentTime + 0.15,
-      );
+      gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
 
       oscillator.connect(gainNode);
       gainNode.connect(audioCtx.destination);
 
       oscillator.start(audioCtx.currentTime);
-      oscillator.stop(audioCtx.currentTime + 0.15);
+      oscillator.stop(audioCtx.currentTime + 0.1);
     } catch (error) {
       console.error(error);
     }
@@ -119,7 +133,9 @@ const ChatWindow = () => {
   const handleSendMessage = async (e) => {
     if (e) e.preventDefault();
     if (!text.trim() && !imagePreview) return;
+    if (isSending) return;
 
+    setIsSending(true);
     try {
       await sendMessage({ text: text.trim(), image: imagePreview, isGhost: isGhostMode });
       playSendSound();
@@ -128,6 +144,8 @@ const ChatWindow = () => {
       setShowEmojiPicker(false);
     } catch (error) {
       console.error("Failed to send message", error);
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -197,7 +215,7 @@ const ChatWindow = () => {
   const isOnline = onlineUsers.includes(selectedUser?._id);
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-base-200 transition-colors duration-300 relative">
+    <div className="flex-1 flex flex-col h-full bg-base-200 transition-colors duration-300 relative min-h-0">
       <div
         className="absolute inset-0 pointer-events-none transition-all duration-300 bg-repeat"
         style={{
@@ -244,7 +262,10 @@ const ChatWindow = () => {
               exit={{ opacity: 0 }}
               className="flex items-center justify-between w-full"
             >
-              <div className="flex items-center gap-4 cursor-pointer group">
+              <div className="flex items-center gap-2 md:gap-4 cursor-pointer group">
+                <label htmlFor="mobile-sidebar-drawer" className="lg:hidden btn btn-ghost btn-circle drawer-button flex-shrink-0 -ml-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
+                </label>
                 <div className="avatar indicator">
                   {isOnline && <span className="indicator-item badge badge-success badge-xs"></span>}
                   <div className="w-12 h-12 rounded-full shadow-sm group-hover:shadow-md transition-shadow">
@@ -261,7 +282,7 @@ const ChatWindow = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex gap-2 relative">
+              <div className="flex gap-2 relative" ref={menuRef}>
                 <button
                   onClick={() => setShowSearch(true)}
                   className="w-10 h-10 flex items-center justify-center rounded-full text-base-content/50 hover:text-primary hover:bg-base-200 transition-all"
@@ -313,7 +334,7 @@ const ChatWindow = () => {
 
       {/* Message Area */}
       <div
-        className="flex-1 card overflow-y-auto px-6 py-8 custom-scrollbar z-10 relative bg-transparent shadow-none border-none rounded-none"
+        className="flex-1 card overflow-y-auto overflow-x-hidden px-3 md:px-6 py-4 md:py-8 custom-scrollbar z-10 relative bg-transparent shadow-none border-none rounded-none"
         onClick={() => setShowEmojiPicker(false)}
       >
         {isMessagesLoading ? (
@@ -384,7 +405,7 @@ const ChatWindow = () => {
               onSubmit={handleSendMessage}
               className="flex gap-3 items-end relative z-20"
             >
-              <div className="flex-1 input bg-base-100 rounded-3xl shadow-lg border border-base-300 flex items-end p-1.5 transition-colors min-h-[56px] h-auto">
+              <div className="flex-1 bg-base-100 rounded-3xl shadow-lg border border-base-300 flex items-end p-1.5 transition-colors min-h-[56px] h-auto overflow-hidden">
                 <input
                   type="file"
                   accept="image/*"
@@ -464,8 +485,8 @@ const ChatWindow = () => {
 
               <button
                 type="submit"
-                disabled={(!text.trim() && !imagePreview) || isBlocked}
-                className={`p-4 rounded-full flex items-center justify-center flex-shrink-0 transition-all shadow-lg ${(!text.trim() && !imagePreview) || isBlocked ? "bg-base-300 text-base-content/50 cursor-not-allowed" : "bg-primary hover:bg-secondary hover:scale-105 text-primary-content shadow-primary/30"}`}
+                disabled={(!text.trim() && !imagePreview) || isBlocked || isSending}
+                className={`w-12 h-12 md:w-14 md:h-14 mb-0.5 rounded-full flex items-center justify-center flex-shrink-0 transition-all shadow-lg ${(!text.trim() && !imagePreview) || isBlocked || isSending ? "bg-base-300 text-base-content/50 cursor-not-allowed" : "bg-primary hover:bg-secondary hover:scale-105 text-primary-content shadow-primary/30"}`}
               >
                 <svg
                   className="w-6 h-6 transform translate-x-0.5"
