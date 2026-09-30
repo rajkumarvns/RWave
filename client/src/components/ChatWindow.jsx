@@ -312,14 +312,14 @@ const ChatWindow = () => {
               
               <div className="flex items-center gap-1 sm:gap-2 relative text-gray-500 dark:text-[#aebac1] shrink-0" ref={menuRef}>
                 <button
-                  onClick={() => initiateCall(selectedUser._id, "video")}
+                  onClick={() => initiateCall(selectedUser, "video")}
                   className="p-1.5 sm:p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#2a3942] transition-colors"
                   title="Video Call"
                 >
                   <FiVideo size={19} />
                 </button>
                 <button
-                  onClick={() => initiateCall(selectedUser._id, "audio")}
+                  onClick={() => initiateCall(selectedUser, "audio")}
                   className="p-1.5 sm:p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#2a3942] transition-colors"
                   title="Audio Call"
                 >

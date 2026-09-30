@@ -109,6 +109,8 @@ io.on("connection", (socket) => {
         from: data.from,
         callType: data.callType,
       });
+    } else {
+      socket.emit("call-unavailable");
     }
   });
 
