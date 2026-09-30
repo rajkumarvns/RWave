@@ -18,6 +18,7 @@ export const ChatProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : null;
   });
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [typingUsers, setTypingUsers] = useState([]);
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
@@ -51,7 +52,7 @@ export const ChatProvider = ({ children }) => {
     }
   }, [authUser]);
 
-  // Handle incoming real-time messages
+  // Handle incoming real-time messages and typing status
   useEffect(() => {
     socket?.on("receive-message", (newMessage) => {
       if (
@@ -59,6 +60,10 @@ export const ChatProvider = ({ children }) => {
         (String(newMessage.senderId) === String(selectedUser._id) ||
          String(newMessage.receiverId) === String(selectedUser._id))
       ) {
+        if (String(newMessage.senderId) === String(selectedUser._id)) {
+          newMessage.status = "seen";
+          socket.emit("mark-messages-seen", { senderId: selectedUser._id });
+        }
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       }
     });
@@ -69,9 +74,51 @@ export const ChatProvider = ({ children }) => {
       );
     });
 
+    socket?.on("typing-status", ({ senderId }) => {
+      setTypingUsers((prev) => {
+        if (!prev.includes(senderId)) return [...prev, senderId];
+        return prev;
+      });
+    });
+
+    socket?.on("stop-typing-status", ({ senderId }) => {
+      setTypingUsers((prev) => prev.filter((id) => id !== senderId));
+    });
+
+    socket?.on("message-status-update", ({ messageId, status }) => {
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg._id === messageId ? { ...msg, status } : msg
+        )
+      );
+    });
+
+    socket?.on("messages-seen", ({ chatWith }) => {
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          String(msg.receiverId) === String(chatWith)
+            ? { ...msg, status: "seen" }
+            : msg
+        )
+      );
+    });
+
+    socket?.on("message-edited", ({ messageId, text }) => {
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg._id === messageId ? { ...msg, text } : msg
+        )
+      );
+    });
+
     return () => {
       socket?.off("receive-message");
       socket?.off("message-deleted");
+      socket?.off("typing-status");
+      socket?.off("stop-typing-status");
+      socket?.off("message-status-update");
+      socket?.off("messages-seen");
+      socket?.off("message-edited");
     };
   }, [socket, selectedUser]);
 
@@ -85,6 +132,9 @@ export const ChatProvider = ({ children }) => {
         },
       );
       setMessages(res.data);
+      if (socket) {
+        socket.emit("mark-messages-seen", { senderId: userId });
+      }
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -116,13 +166,12 @@ export const ChatProvider = ({ children }) => {
     }
   }, [selectedUser]);
 
-
-
   return (
     <ChatContext.Provider
       value={{
         socket,
         onlineUsers,
+        typingUsers,
         selectedUser,
         setSelectedUser,
         messages,
@@ -134,3 +183,4 @@ export const ChatProvider = ({ children }) => {
     </ChatContext.Provider>
   );
 };
+

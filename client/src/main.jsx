@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { ChatProvider } from './context/ChatContext.jsx'
 import { ThemeProvider } from './context/ThemeContext.jsx'
+import { CallContextProvider } from './context/CallContext.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -13,7 +14,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ThemeProvider>
         <AuthProvider>
           <ChatProvider>
-            <App />
+            <CallContextProvider>
+              <App />
+            </CallContextProvider>
           </ChatProvider>
         </AuthProvider>
       </ThemeProvider>

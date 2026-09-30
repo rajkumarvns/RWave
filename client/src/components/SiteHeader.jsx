@@ -26,9 +26,9 @@ const SiteHeader = () => {
   };
 
   return (
-    <div className="navbar bg-base-100 shadow-md z-50 relative px-4">
+    <div className="navbar bg-base-100 shadow-md z-50 relative px-3 sm:px-4 shrink-0 h-16 min-h-[4rem]">
       <div className="flex-1">
-        <Link to="/" className="text-3xl font-bold text-primary tracking-tight">
+        <Link to="/" className="text-2xl sm:text-3xl font-bold text-primary tracking-tight">
           RWave
         </Link>
       </div>

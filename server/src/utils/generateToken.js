@@ -2,11 +2,11 @@ import jwt from "jsonwebtoken";
 
 export const generateToken = (userId, res) => {
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: "15d",
+    expiresIn: "1d",
   });
 
   res.cookie("jwt", token, {
-    maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days in MS
+    maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day in MS
     httpOnly: true, // prevent XSS attacks cross-site scripting attacks
     sameSite: process.env.NODE_ENV !== "development" ? "none" : "strict",
     secure: process.env.NODE_ENV !== "development",

@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { Toaster } from "react-hot-toast";
 import Landing from "./pages/Landing";
@@ -10,6 +10,7 @@ import Settings from "./pages/Settings";
 import ForgotPassword from "./pages/ForgotPassword";
 import { useTheme } from "./context/ThemeContext";
 import SiteHeader from "./components/SiteHeader";
+import CallUI from "./components/CallUI";
 
 function App() {
   const { authUser } = useAuth();
@@ -17,9 +18,13 @@ function App() {
   // even if we don't strictly use the `theme` variable here.
   useTheme(); 
 
+  const location = useLocation();
+  const isChatRoute = location.pathname === "/chat";
+
   return (
-    <div className="min-h-screen bg-base-100 text-base-content transition-colors duration-300 flex flex-col">
+    <div className={`bg-base-100 text-base-content transition-colors duration-300 flex flex-col ${isChatRoute ? 'h-[100dvh] h-screen w-full overflow-hidden' : 'min-h-screen'}`}>
       <SiteHeader />
+      <CallUI />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/chat" element={authUser ? <Home /> : <Navigate to="/login" />} />

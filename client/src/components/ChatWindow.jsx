@@ -6,18 +6,23 @@ import MessageBubble from "./MessageBubble";
 import EmojiPicker from "emoji-picker-react";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
+import { FiSearch, FiMoreVertical, FiPaperclip, FiSmile, FiSend, FiX, FiPhone, FiVideo, FiMenu } from "react-icons/fi";
+import { useCall } from "../context/CallContext";
 
 const ChatWindow = () => {
   const {
     selectedUser,
     setSelectedUser,
     messages,
-    setMessages,
     sendMessage,
     isMessagesLoading,
     onlineUsers,
+    typingUsers,
+    socket,
   } = useChat();
-  const { authUser } = useAuth();
+  const { authUser, setAuthUser } = useAuth();
+  const { initiateCall } = useCall();
   const { chatWallpaper } = useTheme();
   const currentWallpaper = chatWallpapers[chatWallpaper] || chatWallpapers.default;
 
@@ -31,8 +36,9 @@ const ChatWindow = () => {
   const [isSending, setIsSending] = useState(false);
 
   const fileInputRef = useRef(null);
-  const messagesEndRef = useRef(null);
+  const messageContainerRef = useRef(null);
   const menuRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -47,42 +53,37 @@ const ChatWindow = () => {
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messageContainerRef.current) {
+      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+    }
   }, [messages]);
-
-  // Close menus when clicking outside could be added, but for simplicity we toggle
 
   if (!selectedUser) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-base-200 transition-colors duration-300 relative overflow-hidden">
+      <div className="flex-1 flex flex-col items-center justify-center bg-[#f0f2f5] dark:bg-[#222e35] transition-colors duration-300 relative border-b-8 border-[#25d366] overflow-hidden h-full w-full">
         <div className="absolute top-4 left-4 lg:hidden z-50">
-          <label htmlFor="mobile-sidebar-drawer" className="btn btn-circle btn-ghost bg-base-100 shadow-md drawer-button">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
+          <label htmlFor="mobile-sidebar-drawer" className="btn btn-circle btn-ghost bg-white/90 dark:bg-[#2a3942] shadow-md drawer-button text-gray-700 dark:text-gray-200">
+            <FiMenu size={22} />
           </label>
         </div>
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: "radial-gradient(#4f46e5 2px, transparent 2px)",
-            backgroundSize: "30px 30px",
-          }}
-        ></div>
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center z-10 p-12 max-w-md"
-        >
-          <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary text-primary-content rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl text-5xl transform hover:scale-110 transition-transform">
-            👋
-          </div>
-          <h2 className="text-3xl font-extrabold text-base-content mb-3">
-            Welcome to RWave
+        
+        <div className="text-center z-10 p-6 sm:p-12 max-w-md">
+          <div className="w-56 sm:w-80 h-28 sm:h-40 bg-contain bg-no-repeat bg-center mx-auto mb-6 sm:mb-8" style={{backgroundImage: "url('https://static.whatsapp.net/rsrc.php/v3/yO/r/fsWUqRoOsPu.png')"}}></div>
+          <h2 className="text-2xl sm:text-3xl font-light text-gray-800 dark:text-gray-200 mb-3 sm:mb-4">
+            RWave Web
           </h2>
-          <p className="text-base-content/70 text-lg">
-            Hover over the sidebar to select a conversation.
+          <p className="text-gray-500 dark:text-[#8696a0] text-[13px] sm:text-[14px]">
+            Send and receive messages without keeping your phone online.<br className="hidden sm:inline" />
+            Use RWave on up to 4 linked devices and 1 phone at the same time.
           </p>
-        </motion.div>
+          <div className="mt-6 text-[12px] text-gray-400 flex items-center justify-center gap-1">
+            <span>🔒 End-to-end encrypted</span>
+          </div>
+
+          <label htmlFor="mobile-sidebar-drawer" className="lg:hidden mt-6 btn btn-primary btn-sm drawer-button gap-2 shadow-sm">
+            <FiMenu size={16} /> Open Chats
+          </label>
+        </div>
       </div>
     );
   }
@@ -111,7 +112,6 @@ const ChatWindow = () => {
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
 
-      // A pleasant UI "pop" sound
       oscillator.type = "sine";
       oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
       oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.05);
@@ -142,6 +142,13 @@ const ChatWindow = () => {
       setText("");
       removeImage();
       setShowEmojiPicker(false);
+      
+      if (socket && selectedUser) {
+        socket.emit("stop-typing", { receiverId: selectedUser._id });
+      }
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
     } catch (error) {
       console.error("Failed to send message", error);
     } finally {
@@ -174,6 +181,22 @@ const ChatWindow = () => {
 
   const onEmojiClick = (emojiObject) => {
     setText((prev) => prev + emojiObject.emoji);
+  };
+
+  const handleTextChange = (e) => {
+    setText(e.target.value);
+    
+    if (socket && selectedUser) {
+      socket.emit("typing", { receiverId: selectedUser._id });
+
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      typingTimeoutRef.current = setTimeout(() => {
+        socket.emit("stop-typing", { receiverId: selectedUser._id });
+      }, 2000);
+    }
   };
 
   const filteredMessages = messages.filter(
@@ -215,25 +238,26 @@ const ChatWindow = () => {
   const isOnline = onlineUsers.includes(selectedUser?._id);
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-base-200 transition-colors duration-300 relative min-h-0">
+    <div className="flex-1 flex flex-col h-full bg-[#efeae2] dark:bg-[#0b141a] transition-colors duration-300 relative min-h-0">
+      
+      {/* Background Pattern */}
       <div
-        className="absolute inset-0 pointer-events-none transition-all duration-300 bg-repeat"
+        className="absolute inset-0 pointer-events-none opacity-40 dark:opacity-5 mix-blend-multiply dark:mix-blend-normal"
         style={{
-          backgroundImage: currentWallpaper.url ? `url('${currentWallpaper.url}')` : 'none',
-          backgroundColor: currentWallpaper.overlayColor || 'transparent',
-          opacity: currentWallpaper.opacity || 0.05,
+          backgroundImage: "url('https://static.whatsapp.net/rsrc.php/v3/yO/r/fsWUqRoOsPu.png')",
+          backgroundRepeat: "repeat",
         }}
       ></div>
 
       {/* Header */}
-      <div className="h-[76px] px-6 border-b border-base-300 flex items-center justify-between bg-base-100/80 backdrop-blur-md z-30 shadow-sm relative">
+      <div className="h-[60px] px-4 bg-[#f0f2f5] dark:bg-[#202c33] flex items-center justify-between shrink-0 z-30 border-b border-transparent dark:border-gray-800 shadow-sm md:shadow-none">
         <AnimatePresence mode="wait">
           {showSearch ? (
             <motion.div 
               key="search"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
               className="flex items-center w-full gap-4"
             >
               <button
@@ -241,17 +265,17 @@ const ChatWindow = () => {
                   setShowSearch(false);
                   setSearchQuery("");
                 }}
-                className="p-2 text-base-content/70 hover:text-primary rounded-full hover:bg-base-200"
+                className="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded-full"
               >
-                ←
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 4l1.4 1.4L7.8 11H20v2H7.8l5.6 5.6L12 20l-8-8 8-8z"></path></svg>
               </button>
               <input
                 type="text"
                 autoFocus
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search in this chat..."
-                className="input input-bordered flex-1 px-4 py-2 bg-base-200 rounded-lg focus:outline-none text-base-content"
+                placeholder="Search..."
+                className="flex-1 px-4 py-1.5 bg-white dark:bg-[#2a3942] rounded-lg focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-500"
               />
             </motion.div>
           ) : (
@@ -260,67 +284,84 @@ const ChatWindow = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex items-center justify-between w-full"
+              className="flex items-center justify-between w-full h-full"
             >
-              <div className="flex items-center gap-2 md:gap-4 cursor-pointer group">
-                <label htmlFor="mobile-sidebar-drawer" className="lg:hidden btn btn-ghost btn-circle drawer-button flex-shrink-0 -ml-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
+              <div className="flex items-center gap-2 sm:gap-3 cursor-pointer group min-w-0">
+                <label htmlFor="mobile-sidebar-drawer" className="lg:hidden btn btn-ghost btn-circle btn-sm drawer-button shrink-0 -ml-1 text-gray-600 dark:text-[#aebac1]" title="Open Sidebar">
+                  <FiMenu size={22} />
                 </label>
-                <div className="avatar indicator">
-                  {isOnline && <span className="indicator-item badge badge-success badge-xs"></span>}
-                  <div className="w-12 h-12 rounded-full shadow-sm group-hover:shadow-md transition-shadow">
-                    <img src={selectedUser.profilePic || "/logo.png"} alt="avatar" />
-                  </div>
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden shrink-0">
+                  <img src={selectedUser.profilePic || "/logo.png"} alt="avatar" className="w-full h-full object-cover" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-base-content leading-tight group-hover:text-primary transition-colors">
+                <div className="flex flex-col justify-center h-full min-w-0">
+                  <h3 className="text-[15px] sm:text-[16px] text-gray-900 dark:text-gray-100 font-medium truncate">
                     {selectedUser.fullName}
-                    {isBlocked && <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Blocked</span>}
+                    {isBlocked && <span className="ml-1.5 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full">Blocked</span>}
                   </h3>
-                  <p className={`text-sm font-medium ${isOnline ? "text-green-600" : "text-base-content/70"}`}>
-                    {isOnline ? "Online" : "Offline"}
-                  </p>
+                  {typingUsers.includes(selectedUser?._id) ? (
+                    <p className="text-[12px] sm:text-[13px] text-[#00a884] font-medium leading-none mt-0.5 animate-pulse truncate">
+                      typing...
+                    </p>
+                  ) : (
+                    <p className="text-[12px] sm:text-[13px] text-gray-500 dark:text-[#8696a0] leading-none mt-0.5 truncate">
+                      {isOnline ? "Online" : "click here for contact info"}
+                    </p>
+                  )}
                 </div>
               </div>
-              <div className="flex gap-2 relative" ref={menuRef}>
+              
+              <div className="flex items-center gap-1 sm:gap-2 relative text-gray-500 dark:text-[#aebac1] shrink-0" ref={menuRef}>
+                <button
+                  onClick={() => initiateCall(selectedUser._id, "video")}
+                  className="p-1.5 sm:p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#2a3942] transition-colors"
+                  title="Video Call"
+                >
+                  <FiVideo size={19} />
+                </button>
+                <button
+                  onClick={() => initiateCall(selectedUser._id, "audio")}
+                  className="p-1.5 sm:p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#2a3942] transition-colors"
+                  title="Audio Call"
+                >
+                  <FiPhone size={19} />
+                </button>
                 <button
                   onClick={() => setShowSearch(true)}
-                  className="w-10 h-10 flex items-center justify-center rounded-full text-base-content/50 hover:text-primary hover:bg-base-200 transition-all"
+                  className="p-1.5 sm:p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#2a3942] transition-colors"
+                  title="Search"
                 >
-                  🔍
+                  <FiSearch size={19} />
                 </button>
                 <button
                   onClick={() => setShowMenu(!showMenu)}
-                  className="w-10 h-10 flex items-center justify-center rounded-full text-base-content/50 hover:text-primary hover:bg-base-200 transition-all"
+                  className="p-1.5 sm:p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#2a3942] transition-colors"
+                  title="Menu"
                 >
-                  ⋮
+                  <FiMoreVertical size={19} />
                 </button>
 
-                {/* Dropdown Menu */}
                 <AnimatePresence>
                   {showMenu && (
                     <motion.div 
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="dropdown-content menu absolute top-12 right-0 w-48 bg-base-100 rounded-xl shadow-xl border border-base-300 py-2 z-[60]"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="absolute right-0 top-12 w-48 bg-white dark:bg-[#233138] rounded-md shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-[60] origin-top-right"
                     >
-                      <button onClick={() => { setSelectedUser(null); setShowMenu(false); }} className="w-full text-left px-4 py-2 text-base-content/80 hover:bg-base-200 flex items-center gap-2">
-                        ✕ Close Chat
+                      <button onClick={() => { setSelectedUser(null); setShowMenu(false); }} className="w-full text-left px-4 py-3 hover:bg-[#f5f6f6] dark:hover:bg-[#111b21] text-gray-700 dark:text-gray-200 text-sm">
+                        Close chat
                       </button>
-                      <button onClick={handleClearHistory} className="w-full text-left px-4 py-2 text-base-content/80 hover:bg-base-200 flex items-center gap-2 mt-1">
-                        🗑️ Clear History
+                      <button onClick={handleClearHistory} className="w-full text-left px-4 py-3 hover:bg-[#f5f6f6] dark:hover:bg-[#111b21] text-gray-700 dark:text-gray-200 text-sm">
+                        Clear messages
                       </button>
-                      
-                      <div className="border-t border-base-300 my-1"></div>
                       
                       {isBlocked ? (
-                        <button onClick={handleUnblockUser} className="w-full text-left px-4 py-2 text-primary hover:bg-base-200 flex items-center gap-2">
-                          🔓 Unblock User
+                        <button onClick={handleUnblockUser} className="w-full text-left px-4 py-3 hover:bg-[#f5f6f6] dark:hover:bg-[#111b21] text-green-600 text-sm">
+                          Unblock
                         </button>
                       ) : (
-                        <button onClick={handleBlockUser} className="w-full text-left px-4 py-2 text-error hover:bg-base-200 flex items-center gap-2">
-                          🚫 Block User
+                        <button onClick={handleBlockUser} className="w-full text-left px-4 py-3 hover:bg-[#f5f6f6] dark:hover:bg-[#111b21] text-red-600 text-sm">
+                          Block
                         </button>
                       )}
                     </motion.div>
@@ -334,177 +375,147 @@ const ChatWindow = () => {
 
       {/* Message Area */}
       <div
-        className="flex-1 card overflow-y-auto overflow-x-hidden px-3 md:px-6 py-4 md:py-8 custom-scrollbar z-10 relative bg-transparent shadow-none border-none rounded-none"
+        ref={messageContainerRef}
+        className="flex-1 overflow-y-auto overflow-x-hidden px-3 sm:px-6 md:px-[6%] lg:px-[8%] py-3 sm:py-4 no-scrollbar custom-scrollbar z-10 relative bg-transparent flex flex-col min-h-0"
         onClick={() => setShowEmojiPicker(false)}
       >
-        {isMessagesLoading ? (
-          <div className="flex justify-center items-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="flex-1 flex flex-col min-h-0">
+          <div className="mt-auto space-y-1">
+            {isMessagesLoading ? (
+              <div className="flex justify-center items-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00a884]"></div>
+              </div>
+            ) : displayMessages.length === 0 ? (
+              <div className="text-center text-gray-500 bg-white/60 dark:bg-[#182229]/80 backdrop-blur-xs p-3 rounded-lg mx-auto my-4 text-xs sm:text-sm max-w-sm border border-amber-200/50 dark:border-none shadow-xs">
+                Messages are end-to-end encrypted. No one outside of this chat, not even RWave, can read or listen to them.
+              </div>
+            ) : (
+              displayMessages.map((message) => (
+                <MessageBubble
+                  key={message._id}
+                  message={message}
+                  isSent={message.senderId === authUser._id}
+                />
+              ))
+            )}
           </div>
-        ) : displayMessages.length === 0 ? (
-          <div className="text-center text-base-content/50 mt-10">
-            No messages found.
-          </div>
-        ) : (
-          displayMessages.map((message) => (
-            <MessageBubble
-              key={message._id}
-              message={message}
-              isSent={message.senderId === authUser._id}
-            />
-          ))
-        )}
-        <div ref={messagesEndRef} />
+        </div>
       </div>
 
       {/* Input Area */}
-      <div className="p-4 bg-transparent z-10 transition-colors duration-300 relative">
-        <div className="max-w-4xl mx-auto">
-          <AnimatePresence>
-            {showEmojiPicker && (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                className="absolute bottom-20 left-4 z-50 shadow-2xl rounded-2xl overflow-hidden border border-base-300"
-              >
-                <EmojiPicker onEmojiClick={onEmojiClick} theme="auto" />
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <AnimatePresence>
-            {imagePreview && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="mb-4 relative inline-block bg-base-100 p-2 rounded-2xl shadow-xl border border-base-300"
-              >
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="h-32 rounded-xl object-cover"
-                />
-                <button
-                  onClick={removeImage}
-                  className="absolute -top-3 -right-3 bg-base-content text-base-100 rounded-full w-8 h-8 flex items-center justify-center text-sm hover:bg-error hover:scale-110 shadow-lg transition-all"
-                >
-                  ✕
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {isBlocked ? (
-            <div className="p-4 text-center text-base-content/70 bg-base-200 rounded-xl">
-              You have blocked this user.
-            </div>
-          ) : (
-            <form
-              onSubmit={handleSendMessage}
-              className="flex gap-3 items-end relative z-20"
+      <div className="bg-[#f0f2f5] dark:bg-[#202c33] z-10 min-h-[56px] sm:min-h-[62px] flex items-end py-2 px-2 sm:px-4 shrink-0 relative">
+        <AnimatePresence>
+          {showEmojiPicker && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="absolute bottom-[66px] left-2 sm:left-4 z-50 shadow-2xl rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 max-w-[calc(100vw-20px)] sm:max-w-none"
             >
-              <div className="flex-1 bg-base-100 rounded-3xl shadow-lg border border-base-300 flex items-end p-1.5 transition-colors min-h-[56px] h-auto overflow-hidden">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  ref={fileInputRef}
-                  onChange={handleImageChange}
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="p-3 mb-0.5 text-base-content/50 hover:text-primary hover:bg-base-200 rounded-full transition-colors flex-shrink-0"
-                  title="Attach Image"
-                >
-                  <svg
-                    className="w-6 h-6 transform rotate-45"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                    ></path>
-                  </svg>
-                </button>
+              <EmojiPicker onEmojiClick={onEmojiClick} theme="auto" width={typeof window !== "undefined" && window.innerWidth < 420 ? 300 : 350} height={380} />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-                <textarea
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendMessage();
-                    }
-                  }}
-                  placeholder="Message..."
-                  className="flex-1 max-h-32 min-h-[44px] bg-transparent resize-none py-3 px-2 focus:outline-none text-base-content placeholder-base-content/50 custom-scrollbar"
-                  rows="1"
-                />
-
-                <button
-                  type="button"
-                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                  className={`p-3 mb-0.5 rounded-full transition-colors flex-shrink-0 ${showEmojiPicker ? "text-primary bg-primary/10" : "text-base-content/50 hover:text-primary hover:bg-base-200"}`}
-                  title="Emojis"
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsGhostMode(!isGhostMode)}
-                  className={`p-3 mb-0.5 rounded-full transition-colors flex-shrink-0 ${isGhostMode ? "text-purple-500 bg-purple-50" : "text-base-content/50 hover:text-purple-500 hover:bg-base-200"}`}
-                  title="Ghost Mode (Auto-delete)"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4c-3.3 0-6 2.7-6 6v7l2-1.5 2 1.5 2-1.5 2 1.5 2-1.5 2 1.5V10c0-3.3-2.7-6-6-6z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 9h.01M14 9h.01" />
-                  </svg>
-                </button>
-              </div>
-
+        <AnimatePresence>
+          {imagePreview && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="absolute bottom-[66px] left-2 sm:left-4 bg-[#f0f2f5] dark:bg-[#202c33] p-2 sm:p-3 rounded-lg shadow-xl border border-gray-300 dark:border-gray-700"
+            >
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="h-32 sm:h-40 rounded object-cover"
+              />
               <button
-                type="submit"
-                disabled={(!text.trim() && !imagePreview) || isBlocked || isSending}
-                className={`w-12 h-12 md:w-14 md:h-14 mb-0.5 rounded-full flex items-center justify-center flex-shrink-0 transition-all shadow-lg ${(!text.trim() && !imagePreview) || isBlocked || isSending ? "bg-base-300 text-base-content/50 cursor-not-allowed" : "bg-primary hover:bg-secondary hover:scale-105 text-primary-content shadow-primary/30"}`}
+                onClick={removeImage}
+                className="absolute top-1 right-1 bg-black/50 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-500 transition-colors"
               >
-                <svg
-                  className="w-6 h-6 transform translate-x-0.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                  ></path>
+                <FiX />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {isBlocked ? (
+          <div className="w-full text-center text-gray-500 text-sm py-2">
+            You blocked this contact. Tap to unblock.
+          </div>
+        ) : (
+          <form
+            onSubmit={handleSendMessage}
+            className="flex items-end w-full gap-1.5 sm:gap-3"
+          >
+            <div className="flex gap-0.5 sm:gap-1 mb-1 shrink-0 text-gray-500 dark:text-[#aebac1]">
+              <button
+                type="button"
+                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                className={`p-1.5 sm:p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#2a3942] transition-colors ${showEmojiPicker ? "text-[#00a884]" : ""}`}
+                title="Emoji"
+              >
+                <FiSmile size={22} />
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="p-1.5 sm:p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#2a3942] transition-colors"
+                title="Attach"
+              >
+                <FiPaperclip size={20} className="transform -rotate-45" />
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                ref={fileInputRef}
+                onChange={handleImageChange}
+              />
+            </div>
+
+            <div className="flex-1 bg-white dark:bg-[#2a3942] rounded-lg min-h-[40px] flex items-center px-3 sm:px-4 relative">
+              <textarea
+                value={text}
+                onChange={handleTextChange}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
+                placeholder="Type a message"
+                className="w-full bg-transparent resize-none py-2 max-h-[120px] focus:outline-none text-gray-900 dark:text-gray-100 text-[14px] sm:text-[15px] placeholder-gray-500 leading-snug custom-scrollbar"
+                rows="1"
+              />
+              
+              {/* Ghost Mode Toggle */}
+              <button
+                type="button"
+                onClick={() => setIsGhostMode(!isGhostMode)}
+                className={`absolute right-2 p-1.5 rounded-md transition-colors ${isGhostMode ? "text-purple-500 bg-purple-100 dark:bg-purple-900/30" : "text-gray-400 hover:text-purple-500"}`}
+                title="Ghost Mode (Disappearing Messages)"
+              >
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                 </svg>
               </button>
-            </form>
-          )}
-        </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={(!text.trim() && !imagePreview) || isBlocked || isSending}
+              className={`p-2.5 sm:p-3 mb-0.5 shrink-0 rounded-full flex items-center justify-center transition-colors 
+                ${(!text.trim() && !imagePreview) || isBlocked || isSending 
+                  ? "text-gray-400 cursor-not-allowed" 
+                  : "text-[#00a884] hover:bg-gray-200 dark:hover:bg-[#2a3942]"}`}
+            >
+              <FiSend size={22} className="transform translate-x-0.5" />
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
